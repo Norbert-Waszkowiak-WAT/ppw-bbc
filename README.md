@@ -2,9 +2,9 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11918960&assignment_repo_type=AssignmentRepo)
 
 
-Wyświetlenie podstawowego okna i utowrzenie klasy pleyer 18.092023 <br>
+Wyświetlenie podstawowego okna i utowrzenie klasy pleyer 18.09.2023 <br>
 
-Wyświetlanie gracza i bosa oraz poruszanie się na podstawie klawiatury <br>
+Wyświetlanie gracza i bosa oraz poruszanie się na podstawie klawiatury 22.09.2023<br>
 
 Plan na grę <br>
 
