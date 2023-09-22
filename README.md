@@ -4,6 +4,8 @@
 
 Wyświetlenie podstawowego okna i utowrzenie klasy pleyer 18.092023 <br>
 
+Wyświetlanie gracza i bosa oraz poruszanie się na podstawie klawiatury <br>
+
 Plan na grę <br>
 
 Typowa gra rpg - przynajmniej 2 bossy <br>
