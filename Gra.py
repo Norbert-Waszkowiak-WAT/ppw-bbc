@@ -1,4 +1,5 @@
 import math
+from pygame.locals import *
 import pygame as pg
 import random
 import random
@@ -6,83 +7,106 @@ import tkinter as tk
 from tkinter import messagebox
 import os
 
-WHITE = (255, 255, 255)
+
 BLUE = (0, 0, 225)
+GREY = (128, 128, 128)
+WHITE = (255, 255, 255)
 
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 700
-WINDOW= pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
 
-VEL = 5 # velocity
+class Object:
+    def __init__(self, x, y, width, height, parent_screen):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.parent_screen = parent_screen
 
-RIVER_HEIGHT = 20
-RIVER_WIDTH = 100
-RIVER = pg.Rect(300, 300, RIVER_WIDTH, RIVER_HEIGHT)
+class Player:
+    VEL = 5
 
-BOSS_WIDTH = 80
-BOSS_HEIGHT = 150
-BOSS = pg.image.load(os.path.join('pliki', 'boss.png'))
-BOSS = pg.transform.scale(BOSS, (BOSS_WIDTH, BOSS_HEIGHT))
+    def __init__(self, parent_screen, parent_screen_width, parent_screen_height, objects):
+        self.parent_screen = parent_screen
+        self.parent_screen_width = parent_screen_width
+        self.parent_screen_height = parent_screen_height
+        self.objects = objects
+        self.x = 500
+        self.y = 50
+        self.width = 80
+        self.height = 150
+        self.body = pg.image.load(os.path.join('pliki', 'player.png'))
+        self.body = pg.transform.scale(self.body, (self.width, self.height))
+        self.pos = pg.Rect(self.x, self.y, self.width, self.height)
 
-PLAYER_WIDTH = 80
-PLAYER_HEIGHT = 150
-PLAYER = pg.image.load(os.path.join('pliki', 'player.png'))
-PLAYER = pg.transform.scale(PLAYER, (PLAYER_WIDTH, PLAYER_HEIGHT))
+    def move(self, keys_pressed):
+        old_x = self.x
+        old_y = self.y
 
-PLAYER_POSITION = pg.Rect(500, 50, PLAYER_WIDTH, PLAYER_HEIGHT)
-BOSS_POSITION = pg.Rect(500, 50, BOSS_WIDTH, BOSS_HEIGHT)
-def player_handle_movement(keys_pressed, PLAYER_POSITION):
-    move_left = keys_pressed[pg.K_a] and PLAYER_POSITION.x - VEL > 0
-    move_right = keys_pressed[pg.K_d] and PLAYER_POSITION.x + PLAYER_WIDTH + VEL < WINDOW_WIDTH
-    move_down = keys_pressed[pg.K_s] and PLAYER_POSITION.y + PLAYER_HEIGHT + VEL < WINDOW_HEIGHT
-    move_up = keys_pressed[pg.K_w] and PLAYER_POSITION.y - VEL > 0
-    if_not_river_left = PLAYER_POSITION.x - VEL != RIVER.x + RIVER_WIDTH or (PLAYER_POSITION.y + PLAYER_HEIGHT < RIVER.y or PLAYER_POSITION.y > RIVER.y + RIVER_HEIGHT)
-    if_not_river_right = PLAYER_POSITION.x + PLAYER_WIDTH + VEL != RIVER.x or (PLAYER_POSITION.y + PLAYER_HEIGHT < RIVER.y or PLAYER_POSITION.y > RIVER.y + RIVER_HEIGHT)
-    if_not_river_bottom = PLAYER_POSITION.y + PLAYER_HEIGHT + VEL != RIVER.y or (PLAYER_POSITION.x + PLAYER_WIDTH < RIVER.x or PLAYER_POSITION.x > RIVER.x + RIVER_WIDTH)
-    if_not_river_top = PLAYER_POSITION.y - VEL != RIVER.y + RIVER_HEIGHT or (PLAYER_POSITION.x + PLAYER_WIDTH < RIVER.x or PLAYER_POSITION.x > RIVER.x + RIVER_WIDTH)
+        move_left = keys_pressed[pg.K_a] and self.x - self.VEL > 0
+        move_right = keys_pressed[pg.K_d] and self.x + self.width + self.VEL < self.parent_screen_width
+        move_down = keys_pressed[pg.K_s] and self.y + self.height + self.VEL < self.parent_screen_height
+        move_up = keys_pressed[pg.K_w] and self.y - self.VEL > 0
 
+        if move_left and self.check_collision(old_x - self.VEL, old_y):
+            self.x -= self.VEL
+        if move_right and self.check_collision(old_x + self.VEL, old_y):
+            self.x += self.VEL
+        if move_down and self.check_collision(old_x, old_y + self.VEL):
+            self.y += self.VEL
+        if move_up and self.check_collision(old_x, old_y - self.VEL):
+            self.y -= self.VEL
 
-    if move_left and if_not_river_left:
-        PLAYER_POSITION.x -= VEL
-    if move_right and if_not_river_right:
-        PLAYER_POSITION.x += VEL
-    if move_down and if_not_river_bottom:
-        PLAYER_POSITION.y += VEL
-    if move_up and if_not_river_top:
-        PLAYER_POSITION.y -= VEL
+        self.draw()
 
+    def check_collision(self, new_x, new_y):
+        new_pos = pg.Rect(new_x, new_y, self.width, self.height)
+        for obj in self.objects:
+            if isinstance(obj, pg.Rect) and new_pos.colliderect(obj):
+                return False
+        return True
 
+    def draw(self):
+        self.parent_screen.blit(self.body, (self.x, self.y))
+class Game:
+    def __init__(self):
+        pg.init()
+        self.objects = []
+        self.window = pg.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+        self.Player = Player(self.window, WINDOW_WIDTH, WINDOW_HEIGHT, self.objects)
+        self.Player.draw()
+        self.add_objects()
 
+    def run(self):
+        game = True
+        clock = pg.time.Clock()
+        while game:
+            for event in pg.event.get():
+                if event.type == pg.QUIT:
+                    game = False
+            keys_pressed = pg.key.get_pressed()
+            if keys_pressed[pg.K_a] or keys_pressed[pg.K_d] or keys_pressed[pg.K_s] or keys_pressed[pg.K_w]:
+                self.Player.move(keys_pressed)
+            clock.tick(60)  # fps
+            self.draw_objects()
 
-def draw_window():
-    WINDOW.fill(WHITE)
-    pg.draw.rect(WINDOW, BLUE, RIVER)
-    WINDOW.blit(BOSS, (BOSS_POSITION.x, BOSS_POSITION.y))
-    WINDOW.blit(PLAYER, (PLAYER_POSITION.x, PLAYER_POSITION.y))
-    pg.display.update()
+    def draw_objects(self):
+        self.window.fill((255, 255, 255))
+        for obj in self.objects:
+            if isinstance(obj, pg.Rect):
+                pg.draw.rect(self.window, GREY, obj)
+        self.Player.draw()
+        pg.display.update()
 
-
-class Player(object):
-    def __init__(self, color, pos):
-        pass
-
+    def add_objects(self):
+        obj1 = pg.Rect(200, 200, 50, 50)
+        obj2 = pg.Rect(600, 400, 50, 50)
+        self.objects.append(obj1)
+        self.objects.append(obj2)
+        self.draw_objects()
 
 def main():
+    game = Game()
+    game.run()
 
-
-    game = True
-
-    clock = pg.time.Clock()
-    while game:
-        for event in pg.event.get():
-            if event.type == pg.QUIT:
-                game = False
-        keys_pressed = pg.key.get_pressed()
-        player_handle_movement(keys_pressed, PLAYER_POSITION)
-
-
-
-        clock.tick(60) #ilość klatek na sekunde
-
-        draw_window()
 main()
