@@ -6,7 +6,9 @@ Wyświetlenie podstawowego okna i utowrzenie klasy pleyer 18.09.2023 <br>
 
 Wyświetlanie gracza i bosa oraz poruszanie się na podstawie klawiatury 22.09.2023<br>
 
-WySwietlenie obiektu który ma kolizję z garczem 23.092023 <br>
+Wyświetlenie obiektu który ma kolizję z garczem 23.092023 <br>
+
+Przekonwertownaie całego kodu na OOP 24.09.2023 <br>
 
 Plan na grę <br>
 
