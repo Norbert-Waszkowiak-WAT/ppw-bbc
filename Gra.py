@@ -37,6 +37,7 @@ class Player:
 
     VEL = 0.3
     def __init__(self, parent_screen, parent_screen_width, parent_screen_height, objects):
+
         self.parent_screen = parent_screen
         self.parent_screen_width = parent_screen_width
         self.parent_screen_height = parent_screen_height
@@ -50,6 +51,7 @@ class Player:
         self.pos = pg.Rect(self.x, self.y, self.width, self.height)
 
     def move(self, keys_pressed):
+
         move_left = keys_pressed[pg.K_a] and self.x - self.VEL > 0
         move_right = keys_pressed[pg.K_d] and self.x + self.width + self.VEL < self.parent_screen_width
         move_down = keys_pressed[pg.K_s] and self.y + self.height + self.VEL < self.parent_screen_height
@@ -75,6 +77,7 @@ class Player:
         self.draw()
 
     def check_collision(self, new_x, new_y):
+
         new_rect = pg.Rect(new_x, new_y, self.width, self.height)
 
         for obj in self.objects:
@@ -134,7 +137,9 @@ class Game:
     def add_objects(self):
 
         for y in range(0, WINDOW_HEIGHT, 50): #rzeczy po których możesz chodzić
+
             for x in range(0, WINDOW_WIDTH, 50):
+
                 obj = Object(x, y, 50, 50, self.window, False)
                 self.objects.append(obj)
 
