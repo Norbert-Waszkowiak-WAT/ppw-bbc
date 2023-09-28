@@ -10,22 +10,27 @@ import os
 BLUE = (0, 0, 225)
 GREY = (128, 128, 128)
 WHITE = (255, 255, 255)
+GREEN = (0, 255, 0)
 
 WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 700
 
 class Object:
-    def __init__(self, x, y, width, height, parent_screen):
+    def __init__(self, x, y, width, height, parent_screen, collision):
         self.x = x
         self.y = y
         self.width = width
         self.height = height
         self.parent_screen = parent_screen
+        self.colision = collision
         self.rect = pg.Rect(x, y, width, height)
-    def draw(self):
-        pg.draw.rect(self.parent_screen, GREY, self.rect)
+    def draw_objects(self):
+        if self.colision == True:
+            pg.draw.rect(self.parent_screen, GREY, self.rect)
+        elif self.colision == False:
+            pg.draw.rect(self.parent_screen, GREEN, self.rect)
 class Player:
-    VEL = 5
+    VEL = 0.3
 
     def __init__(self, parent_screen, parent_screen_width, parent_screen_height, objects):
         self.parent_screen = parent_screen
@@ -68,7 +73,7 @@ class Player:
     def check_collision(self, new_x, new_y):
         new_rect = pg.Rect(new_x, new_y, self.width, self.height)
         for obj in self.objects:
-            if isinstance(obj, Object) and new_rect.colliderect(obj.rect):
+            if isinstance(obj, Object) and new_rect.colliderect(obj.rect) and obj.colision == True:
                 return False
         return True
 
@@ -86,6 +91,7 @@ class Game:
     def run(self):
         game = True
         clock = pg.time.Clock()
+        frame = 0
         while game:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -93,23 +99,33 @@ class Game:
             keys_pressed = pg.key.get_pressed()
             if keys_pressed[pg.K_a] or keys_pressed[pg.K_d] or keys_pressed[pg.K_s] or keys_pressed[pg.K_w]:
                 self.Player.move(keys_pressed)
-            clock.tick(60)  # fps
+            clock.tick(0)  # fps
+
             self.draw_objects()
 
     def draw_objects(self):
         self.window.fill((255, 255, 255))
         for obj in self.objects:
             if isinstance(obj, Object):
-                obj.draw()
+                obj.draw_objects()
         self.Player.draw()
         pg.display.update()
 
     def add_objects(self):
+
         for i in range(10):
             x = random.randint(0, WINDOW_WIDTH - 50)
             y = random.randint(0, WINDOW_HEIGHT - 50)
-            obj = Object(x, y, 50, 50, self.window)
-            self.objects.append(obj)
+            if (x > 580 or x < 500) and (y < 100 or y > 250):
+                obj = Object(x, y, 50, 50, self.window, False)
+                self.objects.append(obj)
+        for i in range(10):
+            x = random.randint(0, WINDOW_WIDTH - 50)
+            y = random.randint(0, WINDOW_HEIGHT - 50)
+            if (x > 580 or x < 500) and (y < 100 or y > 250):
+                obj = Object(x, y, 50, 50, self.window, True)
+                self.objects.append(obj)
+
 
 
 
