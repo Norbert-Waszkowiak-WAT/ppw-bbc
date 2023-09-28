@@ -6,6 +6,8 @@ import tkinter as tk
 from tkinter import messagebox
 import os
 
+kupa = 3
+
 BLUE = [0, 0, 225]
 GREY = [128, 128, 128]
 WHITE = [255, 255, 255]
@@ -35,7 +37,7 @@ class Object:
 
 class Player:
 
-    VEL = 0.3
+    VEL = 1
     def __init__(self, parent_screen, parent_screen_width, parent_screen_height, objects):
 
         self.parent_screen = parent_screen
