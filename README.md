@@ -10,7 +10,9 @@ Wyświetlenie obiektu który ma kolizję z garczem 23.092023 <br>
 
 Przekonwertownaie całego kodu na OOP 24.09.2023 <br>
 
-Wyświetlanie grupy obiektów mających kolizję z graczem <br?
+Wyświetlanie grupy obiektów mających kolizję z graczem <br>
+
+Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) <br>
 
 Plan na grę <br>
 
