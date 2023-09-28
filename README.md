@@ -2,6 +2,8 @@
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11918960&assignment_repo_type=AssignmentRepo)
 
 
+Cele które udało się osiągnąć: <br>
+
 Wyświetlenie podstawowego okna i utowrzenie klasy pleyer 18.09.2023 <br>
 
 Wyświetlanie gracza i bosa oraz poruszanie się na podstawie klawiatury 22.09.2023<br>
@@ -10,9 +12,12 @@ Wyświetlenie obiektu który ma kolizję z garczem 23.092023 <br>
 
 Przekonwertownaie całego kodu na OOP 24.09.2023 <br>
 
-Wyświetlanie grupy obiektów mających kolizję z graczem <br>
+Wyświetlanie grupy obiektów mających kolizję z graczem 27.09.23 <br>
 
-Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) <br>
+Wyświetlanie grupy obiektów które nie mają kolizji z graczem 28.09.23 <br>
+
+Utworzenie podstawowej mapy terenu (tło i przeskody) za pomocą obiektów 28.09.23 <br>
+<br>
 
 Plan na grę <br>
 
