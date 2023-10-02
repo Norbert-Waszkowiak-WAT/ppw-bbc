@@ -12,24 +12,19 @@ class Game:
         self.clock = pygame.time.Clock()
         self.running = True
 
+        self.character_spritesheet = Spirtesheet('img/character.png')
+        self.terrain_spritesheet = Spirtesheet('img/terrain.png')
+
     def createTilemap(self):
 
-        """i = 0
-        j = 0
-        for row in tilemap:
-            for column in row:
-                if column == 'B':
-                    Block(self, i, j)
-                if column == 'P':
-                    Player(self, i, j)
-                    j += 1
-            i += 1"""
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
+
+                Ground(self, j, i)
                 if column == 'B':
-                    Block(self, i, j)
+                    Block(self, j, i)
                 if column == 'P':
-                    Player(self, i, j)
+                    Player(self, j, i)
 
 
     def new(self):
