@@ -17,6 +17,8 @@ Wyświetlanie grupy obiektów mających kolizję z graczem 27.09.23 <br>
 Wyświetlanie grupy obiektów które nie mają kolizji z graczem 28.09.23 <br>
 
 Utworzenie podstawowej mapy terenu (tło i przeskody) za pomocą obiektów 28.09.23 <br>
+
+Utworzenie mapy i gracza wykorzystując poziomy <br>
 <br>
 
 Plan na grę <br>
