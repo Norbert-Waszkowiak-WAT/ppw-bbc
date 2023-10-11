@@ -104,9 +104,6 @@ while True:
         if event.type == pg.QUIT:
             quit()
 
-    if knockdown > 2:
-        victory()
-
     if change_to == 'UP' and direction != 'DOWN':
         direction = 'UP'
     if change_to == 'DOWN' and direction != 'UP':
@@ -183,7 +180,10 @@ while True:
             bot_change_to = 'x'
             bot_direction = 'x'
         elif warning.count('U') != 1 and bot_direction != 'D':
-            bot_change_to = 'U'
+            if warning.count('D') != 1 and bot_direction != 'U' and fruit_position[1] > bot_position[1]:
+                bot_change_to = 'D'
+            else:
+                bot_change_to = 'U'
         elif warning.count('D') != 1 and bot_direction != 'U':
             bot_change_to = 'D'
         elif warning.count('R') != 1 and bot_direction != 'L':
@@ -253,4 +253,6 @@ while True:
 
     show_score((255, 255, 255), 'times new roman', 30)
     pg.display.update()
+    if knockdown > 2:
+        victory()
     fps.tick(snake_speed)
