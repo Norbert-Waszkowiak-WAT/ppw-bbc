@@ -13,6 +13,7 @@ class Game:
         self.running = True
 
         self.character_spritesheet = Spirtesheet('img/character.png')
+        self.enemy_spritesheet = Spirtesheet('img/enemy.png')
         self.terrain_spritesheet = Spirtesheet('img/terrain.png')
 
     def createTilemap(self):
@@ -23,6 +24,8 @@ class Game:
                 Ground(self, j, i)
                 if column == 'B':
                     Block(self, j, i)
+                if column == 'E':
+                    Enemy(self, j, i)
                 if column == 'P':
                     Player(self, j, i)
 
