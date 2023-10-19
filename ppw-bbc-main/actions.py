@@ -42,6 +42,19 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+    def update(self):
+
+        self.movement()
+        self.rect.x += self.x_change
+        self.collide_block('x')
+        self.rect.y += self.y_change
+        self.collide_block('y')
+        self.animate()
+        self.collide_enemy()
+
+        self.x_change = 0
+        self.y_change = 0
+
     def movement(self):
 
         keys = pygame.key.get_pressed()
@@ -61,18 +74,8 @@ class Player(pygame.sprite.Sprite):
             self.y_change = PLAYER_SPEED
             self.facing = 'down'
 
-        self.rect.x += self.x_change
-        self.collide_block('x')
-        self.rect.y += self.y_change
-        self.collide_block('y')
-        self.animate()
 
-        self.collide_block('x')
-        self.collide_block('y')
-        self.collide_enemy()
 
-        self.x_change = 0
-        self.y_change = 0
 
 
 

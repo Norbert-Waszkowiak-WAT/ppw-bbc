@@ -4,7 +4,6 @@ from numbers import *
 import sys
 
 class Game:
-
     def __init__(self):
 
         pygame.init()
@@ -18,6 +17,8 @@ class Game:
 
         self.camera_x = 0
         self.camera_y = 0
+
+
 
     def createTilemap(self):
 
@@ -33,6 +34,7 @@ class Game:
                     Player(self, j, i)
 
     def get_player(self):
+
         for sprite in self.all_sprites:
             if isinstance(sprite, Player):
                 return sprite
@@ -52,36 +54,38 @@ class Game:
 
     def events(self):
 
-        #game loop events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
                 self.running = False
 
     def update(self):
-        self.player.movement()
+
+        self.player.update()
 
         self.camera_x = self.player.rect.centerx - WIN_WIDTH // 2
         self.camera_y = self.player.rect.centery - WIN_HEIGHT // 2
 
-        # Przesuń wszystkie sprite'y względem pozycji kamery
-        for sprite in self.all_sprites:
-            sprite.rect.x -= self.camera_x
-            sprite.rect.y -= self.camera_y
-
     def draw(self):
-        # game loop draw
+
         self.screen.fill(BLACK)
 
         for sprite in self.all_sprites:
-            self.screen.blit(sprite.image, sprite.rect)
+            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 and
+                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 and
+                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 and
+                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2)
+            if is_screen:
+                self.screen.blit(sprite.image, sprite.rect)
 
+        for sprite in self.all_sprites:
+            sprite.rect.x -= self.camera_x
+            sprite.rect.y -= self.camera_y
         self.clock.tick(FPS)
         pygame.display.update()
 
     def main(self):
 
-        #game loop
         while self.playing:
             self.events()
             self.update()
