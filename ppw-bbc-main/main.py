@@ -61,7 +61,7 @@ class Game:
 
     def update(self):
 
-        self.player.update()
+        self.all_sprites.update()
 
         self.camera_x = self.player.rect.centerx - WIN_WIDTH // 2
         self.camera_y = self.player.rect.centery - WIN_HEIGHT // 2

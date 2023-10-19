@@ -50,6 +50,7 @@ class Player(pygame.sprite.Sprite):
         self.rect.y += self.y_change
         self.collide_block('y')
         self.animate()
+
         self.collide_enemy()
 
         self.x_change = 0
