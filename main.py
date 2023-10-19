@@ -4,7 +4,6 @@ from numbers import *
 import sys
 
 class Game:
-
     def __init__(self):
 
         pygame.init()
@@ -15,6 +14,11 @@ class Game:
         self.character_spritesheet = Spirtesheet('img/character.png')
         self.enemy_spritesheet = Spirtesheet('img/enemy.png')
         self.terrain_spritesheet = Spirtesheet('img/terrain.png')
+
+        self.camera_x = 0
+        self.camera_y = 0
+
+
 
     def createTilemap(self):
 
@@ -29,6 +33,12 @@ class Game:
                 if column == 'P':
                     Player(self, j, i)
 
+    def get_player(self):
+
+        for sprite in self.all_sprites:
+            if isinstance(sprite, Player):
+                return sprite
+        return None
 
     def new(self):
 
@@ -38,11 +48,12 @@ class Game:
         self.blocks = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
+
         self.createTilemap()
+        self.player = self.get_player()
 
     def events(self):
 
-        #game loop events
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.playing = False
@@ -50,20 +61,31 @@ class Game:
 
     def update(self):
 
-        #gmae loop updates
         self.all_sprites.update()
+
+        self.camera_x = self.player.rect.centerx - WIN_WIDTH // 2
+        self.camera_y = self.player.rect.centery - WIN_HEIGHT // 2
 
     def draw(self):
 
-        #game loop draw
         self.screen.fill(BLACK)
-        self.all_sprites.draw(self.screen)
+
+        for sprite in self.all_sprites:
+            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 and
+                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 and
+                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 and
+                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2)
+            if is_screen:
+                self.screen.blit(sprite.image, sprite.rect)
+
+        for sprite in self.all_sprites:
+            sprite.rect.x -= self.camera_x
+            sprite.rect.y -= self.camera_y
         self.clock.tick(FPS)
         pygame.display.update()
 
     def main(self):
 
-        #game loop
         while self.playing:
             self.events()
             self.update()

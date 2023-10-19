@@ -1,7 +1,7 @@
 import pygame
-from numbers import *
 import math
 import random
+from numbers import *
 
 class Spirtesheet:
 
@@ -14,6 +14,7 @@ class Spirtesheet:
         sprite.blit(self.sheet, (0,0), (x, y, width, height))
         sprite.set_colorkey(BLACK)
         return sprite
+
 
 class Player(pygame.sprite.Sprite):
 
@@ -44,14 +45,13 @@ class Player(pygame.sprite.Sprite):
     def update(self):
 
         self.movement()
+        self.rect.x += self.x_change
+        self.collide_block('x')
+        self.rect.y += self.y_change
+        self.collide_block('y')
         self.animate()
 
-        self.rect.x += self.x_change
-        self.collide_block('x') #sprawdzenie czy nie ma kolizji
-        self.collide_enemy()  # sprawdzenie czy nie ma kolizjiaaaa
-        self.rect.y += self.y_change
-        self.collide_block('y') #sprawdzenie czy nie ma kolizji
-        self.collide_enemy()  # sprawdzenie czy nie ma kolizji
+        self.collide_enemy()
 
         self.x_change = 0
         self.y_change = 0
@@ -59,30 +59,26 @@ class Player(pygame.sprite.Sprite):
     def movement(self):
 
         keys = pygame.key.get_pressed()
-
         if keys[pygame.K_a]:
-            for sprite in self.game.all_sprites:
-                sprite.rect.x += PLAYER_SPEED
-            self.x_change -= PLAYER_SPEED
+            self.x_change = -PLAYER_SPEED
             self.facing = 'left'
 
         if keys[pygame.K_d]:
-            for sprite in self.game.all_sprites:
-                sprite.rect.x -= PLAYER_SPEED
-            self.x_change += PLAYER_SPEED
+            self.x_change = PLAYER_SPEED
             self.facing = 'right'
 
         if keys[pygame.K_w]:
-            self.y_change -= PLAYER_SPEED
+            self.y_change = -PLAYER_SPEED
             self.facing = 'up'
-            for sprite in self.game.all_sprites:
-                sprite.rect.y += PLAYER_SPEED
 
         if keys[pygame.K_s]:
-            self.y_change += PLAYER_SPEED
+            self.y_change = PLAYER_SPEED
             self.facing = 'down'
-            for sprite in self.game.all_sprites:
-                sprite.rect.y -= PLAYER_SPEED
+
+
+
+
+
 
     def collide_enemy(self):
 
@@ -91,23 +87,20 @@ class Player(pygame.sprite.Sprite):
             self.kill()
             self.game.playing = False
 
-
     def collide_block(self, direction):
-
         hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
-        if direction == 'x':
-            if hits:
+        for block in hits:
+            if direction == 'x':
                 if self.x_change > 0:
-                    self.rect.x = hits[0].rect.left - self.rect.width
+                    self.rect.right = block.rect.left
                 if self.x_change < 0:
-                    self.rect.x = hits[0].rect.right
-
-        if direction == 'y':
-            if hits:
+                    self.rect.left = block.rect.right
+            if direction == 'y':
                 if self.y_change > 0:
-                    self.rect.y = hits[0].rect.top - self.rect.height
+                    self.rect.bottom = block.rect.top
                 if self.y_change < 0:
-                    self.rect.y = hits[0].rect.bottom
+                    self.rect.top = block.rect.bottom
+
 
     def animate(self):
 
@@ -247,8 +240,8 @@ class Enemy(pygame.sprite.Sprite):
                                 self.game.enemy_spritesheet.get_sprite(68, 98, self.width, self.height)]
 
         self.right_animations = [self.game.enemy_spritesheet.get_sprite(3, 66, self.width, self.height),
-                                 self.game.enemy_spritesheet.get_sprite(35, 66, self.width, self.height),
-                                 self.game.enemy_spritesheet.get_sprite(68, 66, self.width, self.height)]
+                            self.game.enemy_spritesheet.get_sprite(35, 66, self.width, self.height),
+                            self.game.enemy_spritesheet.get_sprite(68, 66, self.width, self.height)]
 
         if self.facing == 'down':
             if self.y_change == 0:
@@ -306,14 +299,14 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-
 class Ground(pygame.sprite.Sprite):
 
     def __init__(self, game, x, y):
+        super().__init__(game.all_sprites)
         self.game = game
         self._layer = GROUND_LAYER
         self.groups = self.game.all_sprites
-        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.groups.add(self)
 
         self.x = x * TILESIZE
         self.y = y * TILESIZE

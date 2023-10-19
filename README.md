@@ -15,11 +15,7 @@ Wyświetlanie grupy obiektów mających kolizję z graczem 26.09.2023<br>
 
 Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) 2.09.2023<br>
 
-Stworzenie grafiki oraz dodanie animacji chodzenia 13.10.2023 <br>
-
-Utworzenie kamery oraz dodanie wrogów 15.10.2023 <br>
-
-Optymalizacja programu (rysowanie tylko tego co widać na kamerze, a nie cąłej mapy) 19.10.2023
+Stworzenie grafiki oraz dodanie animacji chodzenia 13.10.2023
 
 Plan na grę <br>
 
