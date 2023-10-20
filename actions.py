@@ -36,7 +36,7 @@ class Player(pygame.sprite.Sprite):
         self.facing = 'down'
         self.animation_loop = 1
 
-        self.image = self.game.character_spritesheet.get_sprite(3, 2, self.width, self.height)
+        self.image = self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
