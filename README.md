@@ -13,9 +13,17 @@ Przekonwertownaie całego kodu na OOP 24.09.2023 <br>
 
 Wyświetlanie grupy obiektów mających kolizję z graczem 26.09.2023<br>
 
-Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) 2.09.2023<br>
+Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) 2.10.2023<br>
 
 Stworzenie grafiki oraz dodanie animacji chodzenia 13.10.2023
+
+Stworzenie większej mapy 15.10.2023
+
+Stowrzenie kamery 18.10.2023 
+
+Optymalizacja związana z rysowaniem 20.10.2023
+
+Poprawa kodu 24.10.2023
 
 Plan na grę <br>
 
