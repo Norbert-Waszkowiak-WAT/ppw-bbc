@@ -18,13 +18,10 @@ class Game:
         self.camera_x = 0
         self.camera_y = 0
 
-
-
     def createTilemap(self):
-
+        x = 0
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
-
                 Ground(self, j, i)
                 if column == 'B':
                     Block(self, j, i)
@@ -32,6 +29,9 @@ class Game:
                     Enemy(self, j, i)
                 if column == 'P':
                     Player(self, j, i)
+                if column == "R":
+                    River(self, j, i, x)
+                    x = (x + 1) % 3
 
     def get_player(self):
 
@@ -71,12 +71,13 @@ class Game:
         self.screen.fill(BLACK)
 
         for sprite in self.all_sprites:
-            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 and
-                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 and
-                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 and
-                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2)
+            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 + TILESIZE and
+                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 - TILESIZE and
+                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 - TILESIZE and
+                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2 + TILESIZE)
             if is_screen:
                 self.screen.blit(sprite.image, sprite.rect)
+
 
         for sprite in self.all_sprites:
             sprite.rect.x -= self.camera_x

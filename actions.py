@@ -299,6 +299,42 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+class River(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, initial_frame):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.blocks
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.frame_index = initial_frame
+        self.animation_loop = 0
+
+        self.frames = []
+        for i in range(3):
+            self.frames.append(self.game.terrain_spritesheet.get_sprite(864 + i * TILESIZE, 160, self.width, self.height))
+
+        self.image = self.frames[self.frame_index]
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+    def update(self):
+        self.animate()
+
+    def animate(self):
+        self.animation_loop += 0.35
+
+        if self.animation_loop >= 3:
+            self.frame_index = (self.frame_index + 1) % 3
+            self.image = self.frames[self.frame_index]
+            self.animation_loop = 0
+
 class Ground(pygame.sprite.Sprite):
 
     def __init__(self, game, x, y):
