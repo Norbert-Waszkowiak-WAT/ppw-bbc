@@ -25,6 +25,8 @@ Optymalizacja związana z rysowaniem 20.10.2023
 
 Poprawa kodu 24.10.2023
 
+Stworzenie rzeki razem z animacjami 27.10.2023
+
 Plan na grę <br>
 
 Typowa gra rpg - przynajmniej 2 bossy <br>
