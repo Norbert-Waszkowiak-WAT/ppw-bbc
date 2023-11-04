@@ -11,12 +11,12 @@ class Game:
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
         self.clock = pygame.time.Clock()
         self.running = True
-        self.if_boss = False
+        self.if_boss = True
 
-        self.character_spritesheet = Spirtesheet('img/character.png')
-        self.enemy_spritesheet = Spirtesheet('img/enemy.png')
-        self.terrain_spritesheet = Spirtesheet('img/terrain.png')
-        self.attack_spritesheet = Spirtesheet('img/attack.png')
+        self.character_spritesheet = Spritesheet('img/character.png')
+        self.enemy_spritesheet = Spritesheet('img/enemy.png')
+        self.terrain_spritesheet = Spritesheet('img/terrain.png')
+        self.attack_spritesheet = Spritesheet('img/attack.png')
 
         self.camera_x = 0
         self.camera_y = 0
@@ -46,6 +46,12 @@ class Game:
             if isinstance(sprite, Player):
                 return sprite
         return None
+
+    def kill_boss(self):
+        for sprite in self.all_sprites:
+            if isinstance(sprite, Boss):
+                self.all_sprites.remove(sprite)
+                self.if_boss = False
 
     def new(self):
 
@@ -106,13 +112,14 @@ class Game:
         pygame.display.update()
 
     def main(self):
-        while self.running:
+        while self.playing:
             if self.game_state == "main_game":
                 self.events()
                 self.update()
                 self.draw()
             elif self.game_state == "snake_game":
-                snake()
+                self.snake = SnakeGame(self)
+                self.snake.run()
                 self.game_state = "main_game"
         self.running = False
 

@@ -3,7 +3,7 @@ import math
 import random
 from numbers import *
 
-class Spirtesheet:
+class Spritesheet:
 
     def __init__(self, file):
         self.sheet = pygame.image.load(file).convert()
@@ -25,8 +25,6 @@ class Player(pygame.sprite.Sprite):
         self.groups = self.game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
 
-        self.startx = x * TILESIZE
-        self.starty = y * TILESIZE
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.width = TILESIZE
@@ -68,16 +66,21 @@ class Player(pygame.sprite.Sprite):
     def update(self):
 
         self.movement()
-        self.animate()
 
-        self.collide_block('x')
-        self.collide_block('y')
-        self.collide_boss_area('x')
-        self.collide_boss_area('y')
-        self.collide_enemy()
+
 
         self.rect.x += self.x_change
+        self.collide_block('x')
         self.rect.y += self.y_change
+        self.collide_block('y')
+
+        self.animate()
+        if self.game.if_boss == True:
+            self.collide_boss_area('x')
+            self.collide_boss_area('y')
+        self.collide_enemy()
+
+
         self.x_change = 0
         self.y_change = 0
 
