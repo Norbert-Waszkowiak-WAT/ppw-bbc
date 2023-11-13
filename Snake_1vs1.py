@@ -16,7 +16,7 @@ class SnakeGame:
 
         self.pg.init()
         self.pg.display.set_caption('Snake')
-        self.window = self.pg.display.set_mode((self.window_width, self.window_height))
+        self.window = self.pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
         self.fps = self.pg.time.Clock()
 
         self.bot_position = [50 * self.pixel, 350]
@@ -84,7 +84,7 @@ class SnakeGame:
 
         time.sleep(5)
         self.game_state = "main_game"
-        self.main.kill_boss()
+        self.main.kill_boss(0)
 
     def handle_events(self):
         for event in self.pg.event.get():

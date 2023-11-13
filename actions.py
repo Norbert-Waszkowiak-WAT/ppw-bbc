@@ -67,8 +67,6 @@ class Player(pygame.sprite.Sprite):
 
         self.movement()
 
-
-
         self.rect.x += self.x_change
         self.collide_block('x')
         self.rect.y += self.y_change
@@ -80,17 +78,16 @@ class Player(pygame.sprite.Sprite):
             self.collide_boss_area('y')
         self.collide_enemy()
 
-
         self.x_change = 0
         self.y_change = 0
 
     def attack(self):
 
-
         if self.facing == 'up':
             Attack(self.game, self.rect.x, self.rect.y - TILESIZE)
         if self.facing == 'down':
             Attack(self.game, self.rect.x, self.rect.y + TILESIZE)
+            print("dupa")
         if self.facing == 'left':
             Attack(self.game, self.rect.x - TILESIZE, self.rect.y)
         if self.facing == 'right':
@@ -473,12 +470,13 @@ class Attack(pygame.sprite.Sprite):
                 self.kill()
 
 class Boss(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
+    def __init__(self, game, x, y, k):
 
         self.game = game
         self._layer = BOSS_LAYER
         self.groups = self.game.all_sprites, self.game.boss
         pygame.sprite.Sprite.__init__(self,  self.groups)
+        self.k = k
 
         self.x = x * TILESIZE
         self.y = y * TILESIZE
@@ -490,5 +488,42 @@ class Boss(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
+class Text():
+    def __init__(self, game, text):
+
+        self.game = game
+        self.text = text
+        self.font = pygame.font.Font('freesansbold.ttf', 24)
+        self.snip = self.font.render('', True, 'white')
+        self.counter = 0
+        self.speed = 50
+        self.done = False
+        self.active_message = 0
+        self.message = text[self.active_message]
+
+    def write(self):
+
+        if self.counter < self.speed * len(self.message):
+            self.counter += 1
+        elif self.counter >= self.speed * len(self.message):
+            self.done = True
+
+        pygame.draw.rect(self.game.screen, BLACK, (0, WIN_HEIGHT - TEXT_HEIGHT, TEXT_WIDTH, TEXT_HEIGHT))
+
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_RETURN and self.done and self.active_message < len(self.text) - 1:
+                    self.active_message += 1
+                    self.done = False
+                    self.message = self.text[self.active_message]
+                    self.counter = 0
+                elif event.key == pygame.K_RETURN and self.done and self.active_message == len(self.text) - 1:
+                    self.game.dialouge = False
+        if not self.done:
+            self.snip = self.font.render(self.message[0:self.counter // self.speed], True, 'white')
+        self.game.screen.blit(self.snip, (10, WIN_HEIGHT - TEXT_HEIGHT))
+
+
 
 
