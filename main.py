@@ -2,6 +2,7 @@ import pygame
 from actions import *
 from numbers import *
 from Snake_1vs1 import *
+from Boss import *
 import sys
 
 class Game:
@@ -41,6 +42,9 @@ class Game:
                     River(self, j, i, x)
                     x = (x + 1) % 3
                 if column == 'S':
+                    Boss(self, j, i, k)
+                    k += 1
+                if column == 's':
                     Boss(self, j, i, k)
                     k += 1
 
@@ -133,7 +137,25 @@ class Game:
         self.snake.run()
         self.game_state = "main_game"
 
+    def small_game(self):
+
+        self.dialouge = True
+        """
+        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
+                               ,"To jest czwarta wiadomość"]
+        """
+        self.small_messages = ["kys"]
+        text = Text(self, self.small_messages)
+
+        while self.dialouge:
+            text.write()
+            pygame.display.update()
+        self.small = BossGame(self)
+        self.small.run()
+        self.game_state = "main_game"
+
     def main(self):
+
         while self.playing:
             if self.game_state == "main_game":
                 self.events()
@@ -142,6 +164,10 @@ class Game:
 
             elif self.game_state == "snake_game":
                 self.snake_game()
+
+            elif self.game_state == "small_game":
+                
+                self.small_game()
         self.running = False
 
     def game_over(self):

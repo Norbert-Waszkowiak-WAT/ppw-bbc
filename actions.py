@@ -139,17 +139,29 @@ class Player(pygame.sprite.Sprite):
         for boss in hits:
             if direction == 'x':
                 if self.x_change > 0:
-                    self.game.game_state = "snake_game"
+                    if boss.k == 0:
+                        self.game.game_state = "snake_game"
+                    elif boss.k == 1:
+                        self.game.game_state = "small_game"
                     self.rect.right = boss.rect.left - TILESIZE
                 if self.x_change < 0:
-                    self.game.game_state = "snake_game"
+                    if boss.k == 0:
+                        self.game.game_state = "snake_game"
+                    elif boss.k == 1:
+                        self.game.game_state = "small_game"
                     self.rect.left = boss.rect.right + TILESIZE
             if direction == 'y':
                 if self.y_change > 0:
-                    self.game.game_state = "snake_game"
+                    if boss.k == 0:
+                        self.game.game_state = "snake_game"
+                    elif boss.k == 1:
+                        self.game.game_state = "small_game"
                     self.rect.bottom = boss.rect.top - TILESIZE
                 if self.y_change < 0:
-                    self.game.game_state = "snake_game"
+                    if boss.k == 0:
+                        self.game.game_state = "snake_game"
+                    elif boss.k == 1:
+                        self.game.game_state = "small_game"
                     self.rect.top = boss.rect.bottom + TILESIZE
 
 
