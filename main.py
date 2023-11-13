@@ -8,7 +8,7 @@ class Game:
     def __init__(self):
 
         pygame.init()
-        self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+        self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
         self.if_boss = True
@@ -17,14 +17,17 @@ class Game:
         self.enemy_spritesheet = Spritesheet('img/enemy.png')
         self.terrain_spritesheet = Spritesheet('img/terrain.png')
         self.attack_spritesheet = Spritesheet('img/attack.png')
+        self.text_spritesheet = Spritesheet('img/text.png')
 
         self.camera_x = 0
         self.camera_y = 0
 
         self.game_state = "main_game"
+        self.dialouge = False
 
     def createTilemap(self):
         x = 0
+        k = 0
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
                 Ground(self, j, i)
@@ -38,7 +41,8 @@ class Game:
                     River(self, j, i, x)
                     x = (x + 1) % 3
                 if column == 'S':
-                    Boss(self, j, i)
+                    Boss(self, j, i, k)
+                    k += 1
 
     def get_player(self):
 
@@ -47,11 +51,12 @@ class Game:
                 return sprite
         return None
 
-    def kill_boss(self):
+    def kill_boss(self, k):
         for sprite in self.all_sprites:
             if isinstance(sprite, Boss):
-                self.all_sprites.remove(sprite)
-                self.if_boss = False
+                if sprite.k == k:
+                    self.all_sprites.remove(sprite)
+
 
     def new(self):
 
@@ -62,6 +67,7 @@ class Game:
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.boss = pygame.sprite.LayeredUpdates()
+        self.text = pygame.sprite.LayeredUpdates()
 
         self.createTilemap()
         self.player = self.get_player()
@@ -75,14 +81,14 @@ class Game:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
                     self.player.attack()
-                    """if self.player.facing == 'up':
+                    if self.player.facing == 'up':
                         Attack(self, self.player.rect.x, self.player.rect.y - TILESIZE)
                     if self.player.facing == 'down':
                         Attack(self, self.player.rect.x, self.player.rect.y + TILESIZE)
                     if self.player.facing == 'left':
                         Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
                     if self.player.facing == 'right':
-                        Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)"""
+                        Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
 
 
 
@@ -90,19 +96,19 @@ class Game:
 
         self.all_sprites.update()
 
-        self.camera_x = self.player.rect.centerx - WIN_WIDTH // 2
-        self.camera_y = self.player.rect.centery - WIN_HEIGHT // 2
+        self.camera_x = self.player.rect.centerx - TOTAL_WIDTH // 2
+        self.camera_y = self.player.rect.centery - TOTAL_HEIGHT // 2
 
     def draw(self):
 
-        self.screen.fill(BLACK)
+        self.screen.fill(BLUE)
 
 
         for sprite in self.all_sprites:
-            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 + TILESIZE and
-                            sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 - TILESIZE and
-                            sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 - TILESIZE and
-                            sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2 + TILESIZE)
+            is_screen = (sprite.rect.left < self.player.rect.centerx + TOTAL_WIDTH // 2 + TILESIZE and
+                            sprite.rect.right > self.player.rect.centerx - TOTAL_WIDTH // 2 - TILESIZE and
+                            sprite.rect.bottom > self.player.rect.centery - TOTAL_HEIGHT // 2 - TILESIZE and
+                            sprite.rect.top < self.player.rect.centery + TOTAL_HEIGHT // 2 + TILESIZE)
             if is_screen:
                 sprite_on_screen_x = sprite.rect.x - self.camera_x
                 sprite_on_screen_y = sprite.rect.y - self.camera_y
@@ -111,16 +117,31 @@ class Game:
         self.clock.tick(FPS)
         pygame.display.update()
 
+    def snake_game(self):
+        self.dialouge = True
+        """
+        self.snake_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
+                               ,"To jest czwarta wiadomość"]
+        """
+        self.snake_messages = ["kys"]
+        text = Text(self, self.snake_messages)
+
+        while self.dialouge:
+            text.write()
+            pygame.display.update()
+        self.snake = SnakeGame(self)
+        self.snake.run()
+        self.game_state = "main_game"
+
     def main(self):
         while self.playing:
             if self.game_state == "main_game":
                 self.events()
                 self.update()
                 self.draw()
+
             elif self.game_state == "snake_game":
-                self.snake = SnakeGame(self)
-                self.snake.run()
-                self.game_state = "main_game"
+                self.snake_game()
         self.running = False
 
     def game_over(self):
