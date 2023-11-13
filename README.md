@@ -15,19 +15,26 @@ Wyświetlanie grupy obiektów mających kolizję z graczem 26.09.2023<br>
 
 Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) 2.10.2023<br>
 
-Stworzenie grafiki oraz dodanie animacji chodzenia 13.10.2023
+Stworzenie grafiki oraz dodanie animacji chodzenia 13.10.2023 <br>
 
-Stworzenie większej mapy 15.10.2023
+Stworzenie większej mapy 15.10.2023 <br>
 
-Stowrzenie kamery 18.10.2023 
+Stowrzenie kamery 18.10.2023 <br>
 
-Optymalizacja związana z rysowaniem 20.10.2023
+Optymalizacja związana z rysowaniem 20.10.2023 <br>
 
-Poprawa kodu 24.10.2023
+Poprawa kodu 24.10.2023 <br>
 
-Stworzenie rzeki razem z animacjami 27.10.2023
+Stworzenie rzeki razem z animacjami 27.10.2023 <br>
 
-Optymalizacja kamery (liczenie tylko ekranu zamiast cąłej mapy) 3.11.2023
+Optymalizacja kamery (liczenie tylko ekranu zamiast cąłej mapy) 3.11.2023 <br>
+
+Stworzenie minigierki opartej na snake ale z pseudosztuczną inteligencją jako rywalem 5.11.2023 <br>
+
+Stworzenie dialogów związanych z interakcjami z elemantami 10.11.2023
+
+Połączenie głównej gry z drugą minigierką i obsłużenie eliminacji obiektów związanych z bosami na głownej mapie 13.112023 <br>
+
 
 Plan na grę <br>
 
