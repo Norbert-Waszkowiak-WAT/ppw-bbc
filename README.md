@@ -29,7 +29,7 @@ Stworzenie rzeki razem z animacjami 27.10.2023 <br>
 
 Optymalizacja kamery (liczenie tylko ekranu zamiast cąłej mapy) 3.11.2023 <br>
 
-Stworzenie minigierki opartej na snake ale z pseudosztuczną inteligencją jako rywalem 5.11.2023 <br>
+Stworzenie minigierki opartej na snake ale z zaprogramowanym rywalem 5.11.2023 <br>
 
 Stworzenie dialogów związanych z interakcjami z elemantami 10.11.2023
 
