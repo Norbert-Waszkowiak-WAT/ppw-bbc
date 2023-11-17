@@ -59,8 +59,8 @@ class BossGame:
     def run(self):
         while self.game_state == "small_game":
             self.handle_events()
-            self.colision()
             self.update()
+            self.colision()
             self.fps.tick(64)
 
 
