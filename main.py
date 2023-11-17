@@ -5,6 +5,7 @@ from Snake_1vs1 import *
 from Boss import *
 import sys
 
+
 class Game:
     def __init__(self):
 
@@ -19,12 +20,19 @@ class Game:
         self.terrain_spritesheet = Spritesheet('img/terrain.png')
         self.attack_spritesheet = Spritesheet('img/attack.png')
         self.text_spritesheet = Spritesheet('img/text.png')
+        self.buttons_spritesheet = Spritesheet('img/buttons.png')
 
         self.camera_x = 0
         self.camera_y = 0
 
-        self.game_state = "main_game"
+        self.game_state = "intro_game"
         self.dialouge = False
+
+        self.new_image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
+        self.new_game_button = Button(250, 400, self.new_image, 2.2)
+        self.exit_image = self.buttons_spritesheet.get_sprite(0, 128, 6 * TILESIZE, 2 * TILESIZE)
+        self.exit_button = Button(850, 400, self.exit_image, 2.2)
+
 
     def createTilemap(self):
         x = 0
@@ -61,7 +69,6 @@ class Game:
                 if sprite.k == k:
                     self.all_sprites.remove(sprite)
 
-
     def new(self):
 
         self.playing = True
@@ -94,10 +101,9 @@ class Game:
                     if self.player.facing == 'right':
                         Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
 
-
-
     def update(self):
-
+        pos = pygame.mouse.get_pos()
+        print(pos)
         self.all_sprites.update()
 
         self.camera_x = self.player.rect.centerx - TOTAL_WIDTH // 2
@@ -107,12 +113,11 @@ class Game:
 
         self.screen.fill(BLUE)
 
-
         for sprite in self.all_sprites:
             is_screen = (sprite.rect.left < self.player.rect.centerx + TOTAL_WIDTH // 2 + TILESIZE and
-                            sprite.rect.right > self.player.rect.centerx - TOTAL_WIDTH // 2 - TILESIZE and
-                            sprite.rect.bottom > self.player.rect.centery - TOTAL_HEIGHT // 2 - TILESIZE and
-                            sprite.rect.top < self.player.rect.centery + TOTAL_HEIGHT // 2 + TILESIZE)
+                         sprite.rect.right > self.player.rect.centerx - TOTAL_WIDTH // 2 - TILESIZE and
+                         sprite.rect.bottom > self.player.rect.centery - TOTAL_HEIGHT // 2 - TILESIZE and
+                         sprite.rect.top < self.player.rect.centery + TOTAL_HEIGHT // 2 + TILESIZE)
             if is_screen:
                 sprite_on_screen_x = sprite.rect.x - self.camera_x
                 sprite_on_screen_y = sprite.rect.y - self.camera_y
@@ -155,7 +160,6 @@ class Game:
         self.game_state = "main_game"
 
     def main(self):
-
         while self.playing:
             if self.game_state == "main_game":
                 self.events()
@@ -166,9 +170,12 @@ class Game:
                 self.snake_game()
 
             elif self.game_state == "small_game":
-                
                 self.small_game()
-        self.running = False
+
+            if self.game_state == "intro_game":
+                self.intro_screen()
+
+            self.running = False
 
     def game_over(self):
         game_over_font = pygame.font.Font(None, 36)
@@ -184,14 +191,24 @@ class Game:
         self.playing = False
 
     def intro_screen(self):
-        pass
-
+        for event in pygame.event.get():
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Lewy przycisk myszy
+                    x, y = event.pos
+                    if self.new_game_button.rect.collidepoint(x, y):
+                        print('START')
+                        self.game_state = "main_game"
+                    elif self.exit_button.rect.collidepoint(x, y):
+                        print('EXIT')
+                        self.game_over()
+        self.new_game_button.draw(self.screen)
+        self.exit_button.draw(self.screen)
+        pygame.display.update()
 
 g = Game()
-g.intro_screen()
 g.new()
 while g.running:
     g.main()
-    g.game_over()
+g.game_over()
 pygame.quit()
 sys.exit()
