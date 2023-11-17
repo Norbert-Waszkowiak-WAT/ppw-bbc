@@ -45,6 +45,16 @@ class BossGame:
         pg.display.flip()
         pg.time.wait(1000)
         self.game_state = "main_game"
+    def victory(self):
+        game_over_font = pg.font.Font(None, 36)
+        game_over_text = game_over_font.render("Victory", True, (0, 255, 0))
+        game_over_rect = game_over_text.get_rect()
+        game_over_rect.center = (WIN_WIDTH // 2, WIN_HEIGHT // 2)
+        self.window.fill((0, 0, 0))
+        self.window.blit(game_over_text, game_over_rect)
+        pg.display.flip()
+        pg.time.wait(1000)
+        self.game_state = "main_game"
 
     def colision(self):
         if self.boss.x - self.player.size[0] <= self.player.x <= self.boss.x + self.boss.size[0]:
@@ -52,9 +62,13 @@ class BossGame:
                 self.game_over()
 
     def handle_events(self):
+        keys = pg.key.get_pressed()
         for event in pg.event.get():
             if event.type == pg.QUIT:
                 quit()
+            if keys[pg.K_x]:
+                self.victory()
+
 
     def run(self):
         while self.game_state == "small_game":
