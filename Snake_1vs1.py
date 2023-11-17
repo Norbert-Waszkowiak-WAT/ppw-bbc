@@ -16,7 +16,7 @@ class SnakeGame:
 
         self.pg.init()
         self.pg.display.set_caption('Snake')
-        self.window = self.pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
+        self.window = self.main.screen
         self.fps = self.pg.time.Clock()
 
         self.bot_position = [50 * self.pixel, 350]
@@ -55,15 +55,9 @@ class SnakeGame:
             wall += 'R'
         return wall
 
-    def show_score(self, color, font, size):
-        score_font = self.pg.font.SysFont(font, size)
-        score_surface = score_font.render('Punkty: ' + str(self.score), True, color)
-        score_rect = score_surface.get_rect()
-        self.window.blit(score_surface, score_rect)
-
     def game_over(self):
         my_font = self.pg.font.SysFont('times new roman', 50)
-        game_over_surface = my_font.render('Zdobyłeś ' + str(self.score) + ' punktów!!!', True, (255, 0, 0))
+        game_over_surface = my_font.render('Game over', True, (255, 0, 0))
         game_over_rect = game_over_surface.get_rect()
         game_over_rect.midtop = (self.window_width / 2, self.window_height / 4)
 
@@ -250,7 +244,6 @@ class SnakeGame:
                 if self.snake_position[0] == block[0] and self.snake_position[1] == block[1]:
                     self.game_over()
 
-            self.show_score((255, 255, 255), 'times new roman', 30)
             self.pg.display.update()
             if self.knockdown > 2:
                 self.victory()
