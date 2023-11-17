@@ -35,6 +35,8 @@ Stworzenie dialogów związanych z interakcjami z elemantami 10.11.2023
 
 Połączenie głównej gry z drugą minigierką i obsłużenie eliminacji obiektów związanych z bosami na głownej mapie 13.112023 <br>
 
+Stworzenie menu głównego oraz pauzy w trakcie gry 17.11.2023 <br>
+
 
 Plan na grę <br>
 
