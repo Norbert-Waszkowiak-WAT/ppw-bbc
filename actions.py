@@ -72,9 +72,8 @@ class Player(pygame.sprite.Sprite):
         self.collide_block('y')
 
         self.animate()
-        if self.game.if_boss == True:
-            self.collide_boss_area('x')
-            self.collide_boss_area('y')
+        self.collide_boss_area('x')
+        self.collide_boss_area('y')
         self.collide_enemy()
 
         self.x_change = 0
@@ -134,7 +133,7 @@ class Player(pygame.sprite.Sprite):
 
     def collide_boss_area(self, direction):
 
-        hits = pygame.sprite.spritecollide(self, self.game.boss, False)
+        hits = pygame.sprite.spritecollide(self, self.game.bosses, False)
         for boss in hits:
             if direction == 'x':
                 if self.x_change > 0:
@@ -487,7 +486,7 @@ class Boss(pygame.sprite.Sprite):
     def __init__(self, game, x, y, k):
         self.game = game
         self._layer = BOSS_LAYER
-        self.groups = self.game.all_sprites, self.game.boss
+        self.groups = self.game.all_sprites, self.game.bosses
         pygame.sprite.Sprite.__init__(self, self.groups)
         self.k = k
 
@@ -503,7 +502,7 @@ class Boss(pygame.sprite.Sprite):
         self.rect.y = self.y
 
 
-class Text():
+class Text:
     def __init__(self, game, text):
 
         self.game = game
@@ -539,10 +538,14 @@ class Text():
         self.game.screen.blit(self.snip, (10, WIN_HEIGHT - TEXT_HEIGHT))
 
 
-class Button():
-    def __init__(self, x, y, image, scale):
+class Button(pygame.sprite.Sprite):
+    def __init__(self,game, x, y, image, scale):
         width = image.get_width()
         height = image.get_height()
+        self.game = game
+        self._layer = 7
+        self.groups = self.game.all_sprites, self.game.buttons
+        pygame.sprite.Sprite.__init__(self, self.groups)
         self.image = pygame.transform.scale(image, (int(width * scale), int(height * scale)))
         self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)

@@ -13,7 +13,6 @@ class Game:
         self.screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT), pygame.RESIZABLE)
         self.clock = pygame.time.Clock()
         self.running = True
-        self.if_boss = True
 
         self.character_spritesheet = Spritesheet('img/character.png')
         self.enemy_spritesheet = Spritesheet('img/enemy.png')
@@ -28,10 +27,13 @@ class Game:
         self.game_state = "intro_game"
         self.dialouge = False
 
-        self.new_image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
-        self.new_game_button = Button(250, 400, self.new_image, 2.2)
-        self.exit_image = self.buttons_spritesheet.get_sprite(0, 128, 6 * TILESIZE, 2 * TILESIZE)
-        self.exit_button = Button(850, 400, self.exit_image, 2.2)
+        self.all_sprites = pygame.sprite.LayeredUpdates()
+        self.blocks = pygame.sprite.LayeredUpdates()
+        self.enemies = pygame.sprite.LayeredUpdates()
+        self.attacks = pygame.sprite.LayeredUpdates()
+        self.bosses = pygame.sprite.LayeredUpdates()
+        self.text = pygame.sprite.LayeredUpdates()
+        self.buttons = pygame.sprite.LayeredUpdates()
 
 
     def createTilemap(self):
@@ -55,7 +57,13 @@ class Game:
                 if column == 's':
                     Boss(self, j, i, k)
                     k += 1
-
+    def create_buttons(self):
+        self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
+        self.new_game_button = Button(self, 500, 400, self.image, 3)
+        self.image = self.buttons_spritesheet.get_sprite(0, 128, 6 * TILESIZE, 2 * TILESIZE)
+        self.exit_button = Button(self, 500, 550, self.image, 3)
+        self.image = self.buttons_spritesheet.get_sprite(0, 0, 6 * TILESIZE, 2 * TILESIZE)
+        self.continue_button = Button(self, 500, 250, self.image, 3)
     def get_player(self):
 
         for sprite in self.all_sprites:
@@ -67,19 +75,10 @@ class Game:
         for sprite in self.all_sprites:
             if isinstance(sprite, Boss):
                 if sprite.k == k:
-                    self.all_sprites.remove(sprite)
-
+                    sprite.kill()
     def new(self):
 
         self.playing = True
-
-        self.all_sprites = pygame.sprite.LayeredUpdates()
-        self.blocks = pygame.sprite.LayeredUpdates()
-        self.enemies = pygame.sprite.LayeredUpdates()
-        self.attacks = pygame.sprite.LayeredUpdates()
-        self.boss = pygame.sprite.LayeredUpdates()
-        self.text = pygame.sprite.LayeredUpdates()
-
         self.createTilemap()
         self.player = self.get_player()
 
@@ -100,30 +99,81 @@ class Game:
                         Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
                     if self.player.facing == 'right':
                         Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
+                if event.key == pygame.K_ESCAPE:
+                    self.game_state = "pause_game"
+
+    def restart(self):
+        # Reset all game variables and state
+        self.camera_x = 0
+        self.camera_y = 0
+        self.game_state = "intro_game"
+        self.dialouge = False
+
+        # Clear all sprites
+        self.all_sprites.empty()
+        self.blocks.empty()
+        self.enemies.empty()
+        self.attacks.empty()
+        self.bosses.empty()
+        self.text.empty()
+        self.buttons.empty()
+
+        self.new_game_button.kill()
+        self.exit_button.kill()
+        self.continue_button.kill()
+
 
     def update(self):
-        pos = pygame.mouse.get_pos()
-        print(pos)
         self.all_sprites.update()
 
-        self.camera_x = self.player.rect.centerx - TOTAL_WIDTH // 2
-        self.camera_y = self.player.rect.centery - TOTAL_HEIGHT // 2
+        self.new_game_button.kill()
+        self.exit_button.kill()
+        self.continue_button.kill()
 
-    def draw(self):
+        self.camera_x = self.player.rect.centerx - WIN_WIDTH // 2
+        self.camera_y = self.player.rect.centery - WIN_HEIGHT // 2
 
-        self.screen.fill(BLUE)
+    def fade_sprites(self):
 
         for sprite in self.all_sprites:
-            is_screen = (sprite.rect.left < self.player.rect.centerx + TOTAL_WIDTH // 2 + TILESIZE and
-                         sprite.rect.right > self.player.rect.centerx - TOTAL_WIDTH // 2 - TILESIZE and
-                         sprite.rect.bottom > self.player.rect.centery - TOTAL_HEIGHT // 2 - TILESIZE and
-                         sprite.rect.top < self.player.rect.centery + TOTAL_HEIGHT // 2 + TILESIZE)
+            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 + TILESIZE and
+                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 - TILESIZE and
+                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 - TILESIZE and
+                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2 + TILESIZE)
+            if sprite not in self.buttons and is_screen:
+                sprite.image.set_alpha(
+                    128)  # Ustaw poziom przezroczystości (0 - całkowicie przezroczysty, 255 - nieprzezroczysty)
+
+    def unfade_sprites(self):
+        for sprite in self.all_sprites:
+            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 + TILESIZE and
+                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 - TILESIZE and
+                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 - TILESIZE and
+                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2 + TILESIZE)
+            if sprite not in self.buttons and is_screen:
+                sprite.image.set_alpha(
+                    255)  # Ustaw poziom przezroczystości (0 - całkowicie przezroczysty, 255 - nieprzezroczysty)
+
+    def draw(self):
+        self.screen.fill(WHITE)
+
+        for sprite in self.all_sprites:
+            is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 + TILESIZE and
+                         sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 - TILESIZE and
+                         sprite.rect.bottom > self.player.rect.centery - WIN_HEIGHT // 2 - TILESIZE and
+                         sprite.rect.top < self.player.rect.centery + WIN_HEIGHT // 2 + TILESIZE)
             if is_screen:
                 sprite_on_screen_x = sprite.rect.x - self.camera_x
                 sprite_on_screen_y = sprite.rect.y - self.camera_y
                 self.screen.blit(sprite.image, (sprite_on_screen_x, sprite_on_screen_y))
 
+
         self.clock.tick(FPS)
+
+        if self.game_state == "pause_game":
+            self.new_game_button.draw(self.screen)
+            self.exit_button.draw(self.screen)
+            self.continue_button.draw(self.screen)
         pygame.display.update()
 
     def snake_game(self):
@@ -172,8 +222,11 @@ class Game:
             elif self.game_state == "small_game":
                 self.small_game()
 
-            if self.game_state == "intro_game":
+            elif self.game_state == "intro_game":
                 self.intro_screen()
+
+            elif self.game_state == "pause_game":
+                self.pause()
 
             self.running = False
 
@@ -183,7 +236,7 @@ class Game:
         game_over_rect = game_over_text.get_rect()
         game_over_rect.center = (WIN_WIDTH // 2, WIN_HEIGHT // 2)
 
-        self.screen.fill((0, 0, 0))
+        self.screen.fill(BLACK)
         self.screen.blit(game_over_text, game_over_rect)
         pygame.display.flip()
 
@@ -191,6 +244,7 @@ class Game:
         self.playing = False
 
     def intro_screen(self):
+        self.create_buttons()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Lewy przycisk myszy
@@ -201,9 +255,37 @@ class Game:
                     elif self.exit_button.rect.collidepoint(x, y):
                         print('EXIT')
                         self.game_over()
+
         self.new_game_button.draw(self.screen)
         self.exit_button.draw(self.screen)
         pygame.display.update()
+
+        self.new_game_button.kill()
+        self.exit_button.kill()
+        self.continue_button.kill()
+
+    def pause(self):
+        self.fade_sprites()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.playing = False
+                self.running = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if event.button == 1:  # Lewy przycisk myszy
+                    x, y = event.pos
+                    if self.new_game_button.rect.collidepoint(x, y):
+                        print('START')
+                        self.restart()
+                        self.new()
+                        self.main()
+                    elif self.exit_button.rect.collidepoint(x, y):
+                        print('EXIT')
+                        self.game_over()
+                    elif self.continue_button.rect.collidepoint(x, y):
+                        print("CONTINUE")
+                        self.unfade_sprites()
+                        self.game_state = "main_game"
+        self.draw()
 
 g = Game()
 g.new()
