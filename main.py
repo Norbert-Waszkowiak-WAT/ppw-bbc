@@ -108,7 +108,7 @@ class Game:
 
         self.camera_x = 0
         self.camera_y = 0
-        self.game_state = "intro_game"
+        self.game_state = "main_game"
         self.dialouge = False
 
         # Clear all sprites
