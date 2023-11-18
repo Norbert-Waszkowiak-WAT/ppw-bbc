@@ -37,6 +37,8 @@ Połączenie głównej gry z drugą minigierką i obsłużenie eliminacji obiekt
 
 Stworzenie menu głównego oraz pauzy w trakcie gry 17.11.2023 <br>
 
+Stworzenie resetu gry po naciśnięciu new game 18.11.2023 <br>
+
 
 Plan na grę <br>
 
