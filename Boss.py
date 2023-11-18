@@ -20,36 +20,6 @@ class BossGame:
         self.fps = pg.time.Clock()
         self.cooldown = 0
 
-    def update(self):
-        self.window.fill((50, 50, 50))
-        pg.draw.rect(self.window, (100, 100, 100), (BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2))
-
-        health_rect = pg.draw.rect(self.window, (255, 0, 0),
-                                   (WIN_WIDTH / 2 - 250, WIN_HEIGHT - 20, self.boss.health / 2, 20))
-        self.window.blit(pg.font.Font(None, 36).render("Boss Health", True, (255, 255, 255)), health_rect)
-        health_cylc = pg.draw.circle(self.window, (255, 0, 0),
-                                     (10, 10), 35)
-        self.window.blit(pg.font.Font(None, 36).render(str(self.player.health), True, (255, 255, 255)), health_cylc)
-        energy_cylc = pg.draw.circle(self.window, (255, 255, 0),
-                                     (WIN_WIDTH - 10, 10), 35)
-        self.window.blit(pg.font.Font(None, 36).render(str(int(self.player.energy)), True, (0, 0, 0)), energy_cylc)
-
-        if self.time > 4:
-            self.boss.boss_update()
-            pg.draw.rect(self.window, (0, 100, 0),
-                         (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
-        else:
-            pg.draw.rect(self.window, (100 - self.time * 25, 100, 100 - self.time * 25),
-                         (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
-
-        self.player.player_update()
-        if self.player.blink <= 0:
-            pg.draw.rect(self.window, (0, 0, 0),
-                         (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
-
-        pg.display.update()
-        self.time += 0.015625
-
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
         game_over_text = game_over_font.render("Game Over", True, (255, 0, 0))
@@ -72,12 +42,48 @@ class BossGame:
         pg.time.wait(1000)
         self.game_state = "main_game"
 
+    def draw(self):
+        self.window.fill((50, 50, 50))
+        pg.draw.rect(self.window, (100, 100, 100), (BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2))
+
+        health_rect = pg.draw.rect(self.window, (255, 0, 0),
+                                   (WIN_WIDTH / 2 - 250, WIN_HEIGHT - 20, self.boss.health / 2, 20))
+        self.window.blit(pg.font.Font(None, 36).render("Boss Health", True, (255, 255, 255)), health_rect)
+        health_cylc = pg.draw.circle(self.window, (255, 0, 0),
+                                     (10, 10), 35)
+        self.window.blit(pg.font.Font(None, 36).render(str(self.player.health), True, (255, 255, 255)), health_cylc)
+        energy_cylc = pg.draw.circle(self.window, (255, 255, 0),
+                                     (WIN_WIDTH - 10, 10), 35)
+        self.window.blit(pg.font.Font(None, 36).render(str(int(self.player.energy)), True, (0, 0, 0)), energy_cylc)
+
+        if self.time > 4:
+            pg.draw.rect(self.window, (0, 100, 0),
+                         (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
+        else:
+            pg.draw.rect(self.window, (100 - self.time * 25, 100, 100 - self.time * 25),
+                         (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
+        if self.player.blink <= 0:
+            pg.draw.rect(self.window, (0, 0, 0),
+                         (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
+
+    def update(self):
+        self.boss.boss_update()
+        self.player.player_update()
+        self.draw()
+        self.colision()
+        if self.player.health <= 0:
+            self.game_over()
+        if self.boss.health <= 0:
+            self.victory()
+
+        pg.display.update()
+        self.time += 0.015625
+
     def colision(self):
         if self.cooldown <= 0 and self.player.blink < 1:
-            if self.boss.x - self.player.size[0] <= self.player.x <= self.boss.x + self.boss.size[0]:
-                if self.boss.y + self.boss.size[1] >= self.player.y >= self.boss.y - self.player.size[1]:
-                    self.player.health -= 1
-                    self.cooldown = 60
+            if self.boss.boss_rect.colliderect(self.player.player_rect):
+                self.cooldown = 60
+                self.player.health -= 1
         else:
             self.cooldown -= 1
 
@@ -90,14 +96,11 @@ class BossGame:
                 self.victory()
             if keys[pg.K_s]:
                 self.boss.health -= 10
-        if self.player.health <= 0:
-            self.game_over()
 
     def run(self):
         while self.game_state == "small_game":
             self.handle_events()
             self.update()
-            self.colision()
             self.fps.tick(64)
 
 
@@ -106,6 +109,7 @@ class Player1:
         self.x = x
         self.y = y
         self.size = [width, height]
+        self.player_rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
         self.x_vel = 0
         self.y_vel = 0
         self.energy = 100
@@ -125,6 +129,7 @@ class Player1:
         self.y += self.y_vel // 4
         if self.blink > 0:
             self.blink -= 1
+        self.player_rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
 
     def movement(self):
         keys = pg.key.get_pressed()
@@ -210,6 +215,7 @@ class Boss1:
         self.x_distance = 0
         self.y_distance = 0
         self.size = [width, height]
+        self.boss_rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
 
     def boss_update(self):
         if self.x + 2 > self.random_x > self.x - 2 and self.y + 2 > self.random_y > self.y - 2:
@@ -222,6 +228,7 @@ class Boss1:
             self.y_distance = (self.random_y - self.y)
         else:
             self.random_pos()
+        self.boss_rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
 
     def random_pos(self):
         self.x += self.x_distance / 24
