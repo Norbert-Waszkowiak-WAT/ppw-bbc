@@ -104,6 +104,8 @@ class Game:
 
     def restart(self):
         # Reset all game variables and state
+        self.screen.fill(BLACK)
+
         self.camera_x = 0
         self.camera_y = 0
         self.game_state = "intro_game"
