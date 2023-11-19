@@ -42,6 +42,8 @@ class Player(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+        self.hitbox = self.rect.inflate(0,-13)
+
         self.down_animations = [self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height),
                                 self.game.character_spritesheet.get_sprite(33, 1, self.width, self.height),
                                 self.game.character_spritesheet.get_sprite(65, 1, self.width, self.height),
@@ -61,15 +63,18 @@ class Player(pygame.sprite.Sprite):
                                  self.game.character_spritesheet.get_sprite(33, 65, self.width, self.height),
                                  self.game.character_spritesheet.get_sprite(65, 65, self.width, self.height),
                                  self.game.character_spritesheet.get_sprite(97, 65, self.width, self.height)]
-
+        self.i = 0
     def update(self):
 
         self.movement()
 
-        self.rect.x += self.x_change
-        self.collide_block('x')
-        self.rect.y += self.y_change
-        self.collide_block('y')
+        self.hitbox.x += self.x_change
+        self.collide_obstacles('x')
+        self.hitbox.y += self.y_change
+        self.collide_obstacles('y')
+
+        self.rect.center = self.hitbox.center
+
 
         self.animate()
         self.collide_boss_area('x')
@@ -117,19 +122,32 @@ class Player(pygame.sprite.Sprite):
             self.kill()
             self.game.playing = False
 
-    def collide_block(self, direction):
-        hits = pygame.sprite.spritecollide(self, self.game.blocks, False)
-        for block in hits:
-            if direction == 'x':
-                if self.x_change > 0:
-                    self.rect.right = block.rect.left
-                if self.x_change < 0:
-                    self.rect.left = block.rect.right
-            if direction == 'y':
-                if self.y_change > 0:
-                    self.rect.bottom = block.rect.top
-                if self.y_change < 0:
-                    self.rect.top = block.rect.bottom
+    def collide_obstacles(self, direction):
+        for river in self.game.rivers:
+            if river.hitbox.colliderect(self.hitbox):
+                if direction == 'x':
+                    if self.x_change > 0:
+                        self.hitbox.right = river.hitbox.left
+                    if self.x_change < 0:
+                        self.hitbox.left = river.hitbox.right
+                if direction == 'y':
+                    if self.y_change > 0:
+                        self.hitbox.bottom = river.hitbox.top
+                    if self.y_change < 0:
+                        self.hitbox.top = river.hitbox.bottom
+
+        for block in self.game.blocks:
+            if block.hitbox.colliderect(self.hitbox):
+                if direction == 'x':
+                    if self.x_change > 0:
+                        self.hitbox.right = block.hitbox.left
+                    if self.x_change < 0:
+                        self.hitbox.left = block.hitbox.right
+                if direction == 'y':
+                    if self.y_change > 0:
+                        self.hitbox.bottom = block.hitbox.top
+                    if self.y_change < 0:
+                        self.hitbox.top = block.hitbox.bottom
 
     def collide_boss_area(self, direction):
 
@@ -339,12 +357,14 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
+        self.hitbox = self.rect.inflate(0,-13)
+
 
 class River(pygame.sprite.Sprite):
     def __init__(self, game, x, y, initial_frame):
         self.game = game
         self._layer = BLOCK_LAYER
-        self.groups = self.game.all_sprites, self.game.blocks
+        self.groups = self.game.all_sprites, self.game.rivers
         pygame.sprite.Sprite.__init__(self, self.groups)
 
         self.x = x * TILESIZE
@@ -365,6 +385,8 @@ class River(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
+        self.hitbox = self.rect.inflate(0, -10)
 
     def update(self):
         self.animate()
