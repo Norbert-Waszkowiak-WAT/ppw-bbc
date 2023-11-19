@@ -41,6 +41,8 @@ Stworzenie resetu gry po naciśnięciu new game 18.11.2023 <br>
 
 Dodanie wszystkich podstawowych funkcji do bossfight'u 18.11.2023 <br>
 
+Stworzenie efektu przysłaniania obiektów przez gracza <br>
+
 
 Plan na grę <br>
 
