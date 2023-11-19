@@ -63,7 +63,8 @@ class Player(pygame.sprite.Sprite):
                                  self.game.character_spritesheet.get_sprite(33, 65, self.width, self.height),
                                  self.game.character_spritesheet.get_sprite(65, 65, self.width, self.height),
                                  self.game.character_spritesheet.get_sprite(97, 65, self.width, self.height)]
-        self.i = 0
+        self.if_switched_b = False
+        self.if_switched_b = False
     def update(self):
 
         self.movement()
@@ -137,7 +138,16 @@ class Player(pygame.sprite.Sprite):
                         self.hitbox.top = river.hitbox.bottom
 
         for block in self.game.blocks:
+
             if block.hitbox.colliderect(self.hitbox):
+
+                if self.rect.bottom < block.rect.bottom:
+                    if self.game.all_sprites.get_layer_of_sprite(self) > self.game.all_sprites.get_layer_of_sprite(block):
+                        self.game.all_sprites.switch_layer(BLOCK_LAYER, PLAYER_LAYER)
+                elif self.rect.bottom > block.rect.bottom:
+                    if self.game.all_sprites.get_layer_of_sprite(self) < self.game.all_sprites.get_layer_of_sprite(block):
+                        self.game.all_sprites.switch_layer(BLOCK_LAYER, PLAYER_LAYER)
+
                 if direction == 'x':
                     if self.x_change > 0:
                         self.hitbox.right = block.hitbox.left
@@ -148,6 +158,7 @@ class Player(pygame.sprite.Sprite):
                         self.hitbox.bottom = block.hitbox.top
                     if self.y_change < 0:
                         self.hitbox.top = block.hitbox.bottom
+
 
     def collide_boss_area(self, direction):
 
