@@ -29,6 +29,7 @@ class Game:
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
+        self.rivers = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.bosses = pygame.sprite.LayeredUpdates()
@@ -57,6 +58,10 @@ class Game:
                 if column == 's':
                     Boss(self, j, i, k)
                     k += 1
+                if column == 't':
+                    Tree(self, j, i, 1)
+                if column == 'T':
+                    Tree(self, j, i, 2)
     def create_buttons(self):
         self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
         self.new_game_button = Button(self, 500, 400, self.image, 3)
@@ -99,8 +104,8 @@ class Game:
                         Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
                     if self.player.facing == 'right':
                         Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
-                if event.key == pygame.K_ESCAPE:
-                    self.game_state = "pause_game"
+                    if event.key == pygame.K_ESCAPE:
+                        self.game_state = "pause_game"
 
     def restart(self):
         # Reset all game variables and state
@@ -127,7 +132,8 @@ class Game:
 
     def update(self):
         self.all_sprites.update()
-
+        for attack in self.attacks:
+            attack.update()
         self.new_game_button.kill()
         self.exit_button.kill()
         self.continue_button.kill()
@@ -252,10 +258,8 @@ class Game:
                 if event.button == 1:  # Lewy przycisk myszy
                     x, y = event.pos
                     if self.new_game_button.rect.collidepoint(x, y):
-                        print('START')
                         self.game_state = "main_game"
                     elif self.exit_button.rect.collidepoint(x, y):
-                        print('EXIT')
                         self.game_over()
 
         self.new_game_button.draw(self.screen)
@@ -276,15 +280,12 @@ class Game:
                 if event.button == 1:  # Lewy przycisk myszy
                     x, y = event.pos
                     if self.new_game_button.rect.collidepoint(x, y):
-                        print('START')
                         self.restart()
                         self.new()
                         self.main()
                     elif self.exit_button.rect.collidepoint(x, y):
-                        print('EXIT')
                         self.game_over()
                     elif self.continue_button.rect.collidepoint(x, y):
-                        print("CONTINUE")
                         self.unfade_sprites()
                         self.game_state = "main_game"
         self.draw()

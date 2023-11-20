@@ -91,7 +91,6 @@ class Player(pygame.sprite.Sprite):
             Attack(self.game, self.rect.x, self.rect.y - TILESIZE)
         if self.facing == 'down':
             Attack(self.game, self.rect.x, self.rect.y + TILESIZE)
-            print("dupa")
         if self.facing == 'left':
             Attack(self.game, self.rect.x - TILESIZE, self.rect.y)
         if self.facing == 'right':
@@ -125,39 +124,40 @@ class Player(pygame.sprite.Sprite):
 
     def collide_obstacles(self, direction):
         for river in self.game.rivers:
-            if river.hitbox.colliderect(self.hitbox):
+            if river.rect.colliderect(self.rect):
                 if direction == 'x':
                     if self.x_change > 0:
-                        self.hitbox.right = river.hitbox.left
+                        self.rect.right = river.rect.left
                     if self.x_change < 0:
-                        self.hitbox.left = river.hitbox.right
+                        self.rect.left = river.rect.right
                 if direction == 'y':
                     if self.y_change > 0:
-                        self.hitbox.bottom = river.hitbox.top
+                        self.rect.bottom = river.rect.top
                     if self.y_change < 0:
-                        self.hitbox.top = river.hitbox.bottom
+                        self.rect.top = river.rect.bottom
 
         for block in self.game.blocks:
-
-            if block.hitbox.colliderect(self.hitbox):
-
+            if block.rect.colliderect(self.rect):
                 if self.rect.bottom < block.rect.bottom:
-                    if self.game.all_sprites.get_layer_of_sprite(self) > self.game.all_sprites.get_layer_of_sprite(block):
+                    if self.game.all_sprites.get_layer_of_sprite(self) > self.game.all_sprites.get_layer_of_sprite(
+                            block):
                         self.game.all_sprites.switch_layer(BLOCK_LAYER, PLAYER_LAYER)
                 elif self.rect.bottom > block.rect.bottom:
-                    if self.game.all_sprites.get_layer_of_sprite(self) < self.game.all_sprites.get_layer_of_sprite(block):
+                    if self.game.all_sprites.get_layer_of_sprite(self) < self.game.all_sprites.get_layer_of_sprite(
+                            block):
                         self.game.all_sprites.switch_layer(BLOCK_LAYER, PLAYER_LAYER)
 
-                if direction == 'x':
-                    if self.x_change > 0:
-                        self.hitbox.right = block.hitbox.left
-                    if self.x_change < 0:
-                        self.hitbox.left = block.hitbox.right
-                if direction == 'y':
-                    if self.y_change > 0:
-                        self.hitbox.bottom = block.hitbox.top
-                    if self.y_change < 0:
-                        self.hitbox.top = block.hitbox.bottom
+                if block.hitbox.colliderect(self.hitbox):
+                    if direction == 'x':
+                        if self.x_change > 0:
+                            self.hitbox.right = block.hitbox.left
+                        if self.x_change < 0:
+                            self.hitbox.left = block.hitbox.right
+                    if direction == 'y':
+                        if self.y_change > 0:
+                            self.hitbox.bottom = block.hitbox.top
+                        if self.y_change < 0:
+                            self.hitbox.top = block.hitbox.bottom
 
 
     def collide_boss_area(self, direction):
@@ -440,8 +440,8 @@ class Attack(pygame.sprite.Sprite):
         self.groups = self.game.all_sprites, self.game.attacks
         pygame.sprite.Sprite.__init__(self, self.groups)
 
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
+        self.x = x
+        self.y = y
         self.width = TILESIZE
         self.height = TILESIZE
 
@@ -477,16 +477,14 @@ class Attack(pygame.sprite.Sprite):
                               self.game.attack_spritesheet.get_sprite(128, 0, self.width, self.height)]
 
     def update(self):
+        print(self.rect)
         self.animate()
         self.collide()
 
     def collide(self):
-        hits = pygame.sprite.spritecollide(self, self.game.enemies, False)
-        if hits:
-            print("dupa")
-            for enemy in hits:
+        for enemy in self.game.enemies:
+            if enemy.rect.colliderect(self.rect):
                 enemy.kill()
-
     def animate(self):
         direction = self.game.player.facing
 
@@ -586,4 +584,40 @@ class Button(pygame.sprite.Sprite):
 
     def draw(self, surface):
         surface.blit(self.image, (self.rect.x, self.rect.y))
+
+class Tree(pygame.sprite.Sprite):
+
+    def __init__(self, game, x, y, size):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.blocks
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        if size == 1:
+            self.x = x * TILESIZE
+            self.y = y * TILESIZE
+            self.width = TILESIZE * 2
+            self.height = TILESIZE * 2
+
+            self.image = self.game.terrain_spritesheet.get_sprite(544, 576, self.width, self.height)
+
+            self.rect = self.image.get_rect()
+            self.rect.x = self.x
+            self.rect.y = self.y
+
+            self.hitbox = self.rect.inflate(-15,-30)
+
+        if size == 2:
+            self.x = x * TILESIZE
+            self.y = y * TILESIZE
+            self.width = TILESIZE * 4
+            self.height = TILESIZE * 3.5
+
+            self.image = self.game.terrain_spritesheet.get_sprite(224, 672, self.width, self.height)
+
+            self.rect = self.image.get_rect()
+            self.rect.x = self.x
+            self.rect.y = self.y
+
+            self.hitbox = self.rect.inflate(-80, -30)
 
