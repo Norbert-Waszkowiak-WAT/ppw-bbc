@@ -43,6 +43,8 @@ Dodanie wszystkich podstawowych funkcji do bossfight'u 18.11.2023 <br>
 
 Stworzenie efektu przysłaniania obiektów przez gracza lub garcza przez obiekty w zależności od pozycji 19.11.2023 <br>
 
+Obsłużenie ataków, animacji w zabijanie wrogów 20.11.2023 <br> 
+
 
 Plan na grę <br>
 
