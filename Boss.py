@@ -1,7 +1,7 @@
 import sys
 import pygame as pg
 import time
-from math import atan2, degrees, pi
+from math import hypot, degrees, atan2, cos, sin
 import random
 from numbers import *
 
@@ -19,6 +19,8 @@ class BossGame:
         self.window = pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
         self.fps = pg.time.Clock()
         self.cooldown = 0
+        self.all_sprites = [Sprites('damage', BORDER, BORDER, WIN_WIDTH - 2 * BORDER, WIN_HEIGHT - 2 * BORDER,
+                                    '')]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -65,10 +67,19 @@ class BossGame:
         if self.player.blink <= 0:
             pg.draw.rect(self.window, (0, 0, 0),
                          (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
+        else:
+            pg.draw.rect(self.window, (75, 75, 75),
+                         (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
+
+        for sprite in self.all_sprites:
+            if sprite.name != 'damage':
+                pg.draw.rect(self.window, (255, 0, 255), sprite.rect)
 
     def update(self):
-        self.boss.boss_update()
+        if self.time > 4:
+            self.boss.boss_update()
         self.player.player_update()
+        self.functions()
         self.draw()
         self.colision()
         if self.player.health <= 0:
@@ -78,6 +89,19 @@ class BossGame:
 
         pg.display.update()
         self.time += 0.015625
+
+    def functions(self):
+        for sprite in self.all_sprites:
+            if sprite.name == "attack":
+                if pg.Rect(sprite.rect).colliderect(self.boss.boss_rect):
+                    self.boss.health -= 1
+                    self.all_sprites.remove(sprite)
+                elif not sprite.attack1():
+                    self.all_sprites.remove(sprite)
+
+        if self.player.attack():
+            self.all_sprites.append(Sprites('attack', self.player.x + self.player.size[0] / 2 - 5, self.player.y,
+                                            10, 10, ''))
 
     def colision(self):
         if self.cooldown <= 0 and self.player.blink < 1:
@@ -119,8 +143,7 @@ class Player1:
         """self.image = self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height)
 
         self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y"""
+        self.rect.topleft = (x, y)"""
 
         self.air = False
 
@@ -133,9 +156,6 @@ class Player1:
 
     def movement(self):
         keys = pg.key.get_pressed()
-        mouse = pg.mouse.get_pressed()
-        if mouse[0]:
-            pass
         if keys[pg.K_w] and self.air and self.y > 350 - BORDER:
             self.y_vel -= (25 + self.y_vel / 5)
         elif self.y < WIN_HEIGHT - self.size[1] - BORDER:
@@ -179,6 +199,12 @@ class Player1:
             self.blink = 45
             self.energy -= 30
 
+    def attack(self):
+        mouse = pg.mouse.get_pressed()
+        if mouse[0] and self.energy >= 1:
+            self.energy -= 1
+            return True
+
     def resources(self):
         if self.energy < 100:
             self.energy += 0.25
@@ -190,19 +216,34 @@ class Player1:
 
 
 class Sprites:
-    def __init__(self, x, y, width, height, player):
+    def __init__(self, name, x, y, width, height, img):
+        self.name = name
         self.x = x
         self.y = y
         self.size = [width, height]
-        self.player = player
+        self.rect = (self.x, self.y, self.size[0], self.size[1])
+        self.target = self.direction()
+        self.img = img
 
     def direction(self):
         d = pg.mouse.get_pos()
-        dx = d[0] - self.x
-        dy = d[1] - self.y
-        rads = atan2(-dy, dx)
-        rads %= 2 * pi
-        return degrees(rads)
+        direct = (d[0] - self.x, d[1] - self.y)
+        lenght = hypot(*direct)
+        if lenght == 0.0:
+            direct = (0, -1)
+        else:
+            direct = (direct[0] / lenght, direct[1] / lenght)
+        return direct
+
+    def attack1(self):
+        vel = 25
+        if WIN_WIDTH - BORDER > self.x > BORDER and BORDER < self.y < WIN_HEIGHT - BORDER:
+            self.x += vel * sin(self.target[0])
+            self.y += vel * sin(self.target[1])
+            self.rect = (self.x, self.y, self.size[0], self.size[1])
+            return True
+        else:
+            return False
 
 
 class Boss1:
