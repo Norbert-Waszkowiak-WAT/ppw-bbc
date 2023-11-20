@@ -104,7 +104,7 @@ class Game:
                         Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
                     if self.player.facing == 'right':
                         Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
-                    if event.key == pygame.K_ESCAPE:
+                if event.key == pygame.K_ESCAPE:
                         self.game_state = "pause_game"
 
     def restart(self):
