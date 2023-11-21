@@ -45,6 +45,7 @@ Stworzenie efektu przysłaniania obiektów przez gracza lub garcza przez obiekty
 
 Obsłużenie ataków, animacji w zabijanie wrogów 20.11.2023 <br> 
 
+Stworzenie skrzyni oraz animacji zdobywania broni 21.11.2023 <br>
 
 Plan na grę <br>
 
