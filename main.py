@@ -26,6 +26,7 @@ class Game:
 
         self.game_state = "intro_game"
         self.dialouge = False
+        self.if_pause = False
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
@@ -35,33 +36,39 @@ class Game:
         self.bosses = pygame.sprite.LayeredUpdates()
         self.text = pygame.sprite.LayeredUpdates()
         self.buttons = pygame.sprite.LayeredUpdates()
+        self.chests = pygame.sprite.LayeredUpdates()
+        self.weapons = pygame.sprite.LayeredUpdates()
 
+        self.i = 0
 
     def createTilemap(self):
         x = 0
         k = 0
+        y = 1
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
                 Ground(self, j, i)
                 if column == 'B':
                     Block(self, j, i)
-                if column == 'E':
+                elif column == 'E':
                     Enemy(self, j, i)
-                if column == 'P':
+                elif column == 'P':
                     Player(self, j, i)
-                if column == 'R':
+                elif column == 'R':
                     River(self, j, i, x)
                     x = (x + 1) % 3
-                if column == 'S':
+                elif column == 'S':
                     Boss(self, j, i, k)
                     k += 1
-                if column == 's':
+                elif column == 's':
                     Boss(self, j, i, k)
                     k += 1
-                if column == 't':
+                elif column == 't':
                     Tree(self, j, i, 1)
-                if column == 'T':
+                elif column == 'T':
                     Tree(self, j, i, 2)
+                elif column == 'c':
+                    Chest(self, j, i, y, 0)
     def create_buttons(self):
         self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
         self.new_game_button = Button(self, 500, 400, self.image, 3)
@@ -95,16 +102,12 @@ class Game:
                 self.running = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_SPACE:
-                    self.player.attack()
-                    if self.player.facing == 'up':
-                        Attack(self, self.player.rect.x, self.player.rect.y - TILESIZE)
-                    if self.player.facing == 'down':
-                        Attack(self, self.player.rect.x, self.player.rect.y + TILESIZE)
-                    if self.player.facing == 'left':
-                        Attack(self, self.player.rect.x - TILESIZE, self.player.rect.y)
-                    if self.player.facing == 'right':
-                        Attack(self, self.player.rect.x + TILESIZE, self.player.rect.y)
+                    if self.player.chest():
+                        pass
+                    else:
+                        self.player.attack()
                 if event.key == pygame.K_ESCAPE:
+                        self.if_pause = True
                         self.game_state = "pause_game"
 
     def restart(self):
@@ -115,7 +118,8 @@ class Game:
         self.camera_y = 0
         self.game_state = "main_game"
         self.dialouge = False
-
+        self.if_pause = False
+        self.i = 0
         # Clear all sprites
         self.all_sprites.empty()
         self.blocks.empty()
@@ -124,16 +128,20 @@ class Game:
         self.bosses.empty()
         self.text.empty()
         self.buttons.empty()
+        self.chests.empty()
+        self.weapons.empty()
 
         self.new_game_button.kill()
         self.exit_button.kill()
         self.continue_button.kill()
 
 
+
+
     def update(self):
+
         self.all_sprites.update()
-        for attack in self.attacks:
-            attack.update()
+
         self.new_game_button.kill()
         self.exit_button.kill()
         self.continue_button.kill()
@@ -164,7 +172,6 @@ class Game:
 
     def draw(self):
         self.screen.fill(WHITE)
-
         for sprite in self.all_sprites:
             is_screen = (sprite.rect.left < self.player.rect.centerx + WIN_WIDTH // 2 + TILESIZE and
                          sprite.rect.right > self.player.rect.centerx - WIN_WIDTH // 2 - TILESIZE and
@@ -173,7 +180,11 @@ class Game:
             if is_screen:
                 sprite_on_screen_x = sprite.rect.x - self.camera_x
                 sprite_on_screen_y = sprite.rect.y - self.camera_y
-                self.screen.blit(sprite.image, (sprite_on_screen_x, sprite_on_screen_y))
+                if not isinstance(sprite, Weapon):
+                    self.screen.blit(sprite.image, (sprite_on_screen_x, sprite_on_screen_y))
+                elif self.i != 0:
+                    self.screen.blit(sprite.scaled_image, (sprite_on_screen_x, sprite_on_screen_y))
+
 
 
         self.clock.tick(FPS)
@@ -183,6 +194,36 @@ class Game:
             self.exit_button.draw(self.screen)
             self.continue_button.draw(self.screen)
         pygame.display.update()
+
+    def looting(self, k):
+        for weapon in self.weapons:
+            initial_y = weapon.rect.y
+
+            for i in range(1, 301):
+                self.i += 1
+                scale_factor = i / 100.0
+
+                weapon.scale_image(scale_factor)
+
+                weapon.rect.y = initial_y - i
+
+                pygame.time.wait(10)
+
+                self.draw()
+                self.all_sprites.move_to_front(weapon)
+
+                pygame.display.update()
+
+            weapon.state = 3
+
+        pygame.time.wait(2500)
+        self.all_sprites.get_top_sprite().kill()
+        self.weapons.empty()
+        for chest in self.chests:
+            if chest.k == k:
+                chest.state = 2
+
+        self.game_state = "main_game"
 
     def snake_game(self):
         self.dialouge = True
@@ -219,24 +260,26 @@ class Game:
 
     def main(self):
         while self.playing:
-            if self.game_state == "main_game":
-                self.events()
-                self.update()
-                self.draw()
+            if self.if_pause == False:
+                if self.game_state == "main_game":
+                    self.events()
+                    self.update()
+                    self.draw()
 
-            elif self.game_state == "snake_game":
-                self.snake_game()
+                elif self.game_state == "snake_game":
+                    self.snake_game()
 
-            elif self.game_state == "small_game":
-                self.small_game()
+                elif self.game_state == "small_game":
+                    self.small_game()
 
-            elif self.game_state == "intro_game":
-                self.intro_screen()
+                elif self.game_state == "intro_game":
+                    self.intro_screen()
+            else:
+                if self.game_state == "pause_game":
+                    self.pause()
 
-            elif self.game_state == "pause_game":
-                self.pause()
 
-            self.running = False
+        self.running = False
 
     def game_over(self):
         game_over_font = pygame.font.Font(None, 36)
@@ -287,6 +330,7 @@ class Game:
                         self.game_over()
                     elif self.continue_button.rect.collidepoint(x, y):
                         self.unfade_sprites()
+                        self.if_pause = False
                         self.game_state = "main_game"
         self.draw()
 

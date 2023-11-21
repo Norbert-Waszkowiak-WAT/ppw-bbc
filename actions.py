@@ -63,8 +63,6 @@ class Player(pygame.sprite.Sprite):
                                  self.game.character_spritesheet.get_sprite(33, 65, self.width, self.height),
                                  self.game.character_spritesheet.get_sprite(65, 65, self.width, self.height),
                                  self.game.character_spritesheet.get_sprite(97, 65, self.width, self.height)]
-        self.if_switched_b = False
-        self.if_switched_b = False
     def update(self):
 
         self.movement()
@@ -95,6 +93,20 @@ class Player(pygame.sprite.Sprite):
             Attack(self.game, self.rect.x - TILESIZE, self.rect.y)
         if self.facing == 'right':
             Attack(self.game, self.rect.x + TILESIZE, self.rect.y)
+
+    def collide_chest(self):
+        for chest in self.game.chests:
+            if self.rect.colliderect(chest.hitbox):
+                a = [chest, chest.k]
+                return a
+    def chest(self):
+        if self.collide_chest() is not None:
+            k = self.collide_chest()[1]
+            chest = self.collide_chest()[0]
+            if k == 1:
+                chest.state = 1
+                return True
+        return False
 
     def movement(self):
 
@@ -477,7 +489,6 @@ class Attack(pygame.sprite.Sprite):
                               self.game.attack_spritesheet.get_sprite(128, 0, self.width, self.height)]
 
     def update(self):
-        print(self.rect)
         self.animate()
         self.collide()
 
@@ -621,3 +632,69 @@ class Tree(pygame.sprite.Sprite):
 
             self.hitbox = self.rect.inflate(-80, -30)
 
+class Chest(pygame.sprite.Sprite):
+
+    def __init__(self, game, x, y, k, state):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.chests
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.k = k
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE * 1.5
+
+        self.image = self.game.terrain_spritesheet.get_sprite(448, 608, self.width, self.height)
+
+        self.state = state
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.hitbox = self.rect.inflate(48 ,32)
+
+    def update(self):
+
+        if self.state == 0:
+            self.image = self.game.terrain_spritesheet.get_sprite(448, 608, self.width, self.height)
+        elif self.state == 1:
+            self.image = self.game.terrain_spritesheet.get_sprite(480, 608, self.width, self.height)
+            Weapon(self.game, self.x, self.y)
+            self.game.looting(self.k)
+        elif self.state == 2:
+            self.kill()
+
+class Weapon(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = 0
+        self.groups = self.game.all_sprites, self.game.weapons
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.game.all_sprites.move_to_front(self)
+
+        self.x = x
+        self.y = y
+        self.width = TILESIZE * 2
+        self.height = TILESIZE * 1.5
+
+        self.image = self.game.terrain_spritesheet.get_sprite(608, 576, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.scaled_image = self.image.copy()
+
+    def scale_image(self, scale_factor):
+        # Skaluj obraz i przypisz do scaled_image
+        self.scaled_image = pygame.transform.scale(self.image, (
+            int(self.rect.width * scale_factor),
+            int(self.rect.height * scale_factor)
+        ))
+
+    def animate(self):
+        pass
