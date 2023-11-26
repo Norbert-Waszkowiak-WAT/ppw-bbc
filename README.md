@@ -47,6 +47,9 @@ Obsłużenie ataków, animacji w zabijanie wrogów 20.11.2023 <br>
 
 Stworzenie skrzyni oraz animacji zdobywania broni 21.11.2023 <br>
 
+Poprawa interakcji z rzeką 26.11.2023 <br>
+
+
 Plan na grę <br>
 
 Typowa gra rpg - przynajmniej 2 bossy <br>
