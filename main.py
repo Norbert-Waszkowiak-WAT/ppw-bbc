@@ -41,6 +41,7 @@ class Game:
 
         self.i = 0
 
+
     def createTilemap(self):
         x = 0
         k = 0
@@ -69,6 +70,7 @@ class Game:
                     Tree(self, j, i, 2)
                 elif column == 'c':
                     Chest(self, j, i, y, 0)
+                    y += 1
     def create_buttons(self):
         self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
         self.new_game_button = Button(self, 500, 400, self.image, 3)
