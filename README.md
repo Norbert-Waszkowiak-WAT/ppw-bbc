@@ -11,11 +11,11 @@ Wyświetlenie obiektu który ma kolizję z garczem 23.09.2023 <br>
 
 Przekonwertownaie całego kodu na OOP 24.09.2023 <br>
 
-Wyświetlanie grupy obiektów mających kolizję z graczem 26.09.2023<br>
+Wyświetlanie grupy obiektów mających kolizję z graczem 28.09.2023<br>
 
-Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) 2.10.2023<br>
+Wyświetlanie grupy obiektów które nie mają kolizji z graczem (tło) 5.10.2023<br>
 
-Stworzenie grafiki oraz dodanie animacji chodzenia 13.10.2023 <br>
+Stworzenie grafiki oraz dodanie animacji chodzenia 10.10.2023 <br>
 
 Stworzenie większej mapy 15.10.2023 <br>
 
