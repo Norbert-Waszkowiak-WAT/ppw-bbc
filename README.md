@@ -1,8 +1,6 @@
 [![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/t_QPUBo-)
 [![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11918960&assignment_repo_type=AssignmentRepo)
 
-Utworzenie pliku Boss1.py, w którym została utworzona grawitacja i poruszanie <br>
-
 Wyświetlenie podstawowego okna i utowrzenie klasy pleyer 18.09.2023 <br>
 
 Wyświetlanie gracza i bosa oraz poruszanie się na podstawie klawiatury 22.09.2023<br>
@@ -49,7 +47,9 @@ Stworzenie skrzyni oraz animacji zdobywania broni 21.11.2023 <br>
 
 Poprawa interakcji z rzeką 26.11.2023 <br>
 
-Dodanie możliwości ataku i znikania w Boss'ie 01.12.2023 <br>
+
+
+Dodanie możliwości ataku i znikania w Bossie 01.12.2023 <br>
 
 
 Plan na grę <br>
