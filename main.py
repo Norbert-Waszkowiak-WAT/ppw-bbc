@@ -40,7 +40,7 @@ class Game:
         self.weapons = pygame.sprite.LayeredUpdates()
 
         self.i = 0
-
+        self.test = 0
 
     def createTilemap(self):
         x = 0
