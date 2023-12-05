@@ -19,8 +19,7 @@ class BossGame:
         self.window = pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
         self.fps = pg.time.Clock()
         self.cooldown = 0
-        self.all_sprites = [Sprites('damage', BORDER, BORDER, WIN_WIDTH - 2 * BORDER, WIN_HEIGHT - 2 * BORDER,
-                                    '')]
+        self.all_entity = []
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -71,11 +70,12 @@ class BossGame:
             pg.draw.rect(self.window, (75, 75, 75),
                          (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
 
-        for sprite in self.all_sprites:
+        for sprite in self.all_entity:
             if sprite.name != 'damage':
-                pg.draw.rect(self.window, (255, 0, 255), sprite.rect)
+                self.window.blit(sprite.get_sheet(random.randint(0, 4) * 16, 0, 16, 16), (sprite.x, sprite.y))
 
     def update(self):
+
         if self.time > 4:
             self.boss.boss_update()
         self.player.player_update()
@@ -91,17 +91,17 @@ class BossGame:
         self.time += 0.015625
 
     def functions(self):
-        for sprite in self.all_sprites:
+        for sprite in self.all_entity:
             if sprite.name == "attack":
                 if pg.Rect(sprite.rect).colliderect(self.boss.boss_rect):
                     self.boss.health -= 1
-                    self.all_sprites.remove(sprite)
+                    self.all_entity.remove(sprite)
                 elif not sprite.attack1():
-                    self.all_sprites.remove(sprite)
+                    self.all_entity.remove(sprite)
 
         if self.player.attack():
-            self.all_sprites.append(Sprites('attack', self.player.x + self.player.size[0] / 2 - 5, self.player.y,
-                                            10, 10, ''))
+            self.all_entity.append(Sprites('attack', self.player.x + self.player.size[0] / 2 - 5, self.player.y,
+                                           10, 10, 'img/fireball.png'))
 
     def colision(self):
         if self.cooldown <= 0 and self.player.blink < 1:
@@ -223,7 +223,13 @@ class Sprites:
         self.size = [width, height]
         self.rect = (self.x, self.y, self.size[0], self.size[1])
         self.target = self.direction()
-        self.img = img
+        self.sheet = pg.image.load(img)
+
+    def get_sheet(self, x, y, width, height):
+        sprite = pg.Surface([width, height])
+        sprite.blit(self.sheet, (0, 0), (x, y, width, height))
+        sprite.set_colorkey(BLACK)
+        return sprite
 
     def direction(self):
         d = pg.mouse.get_pos()
