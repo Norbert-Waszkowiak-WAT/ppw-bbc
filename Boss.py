@@ -12,14 +12,14 @@ class BossGame:
         self.time = 0
         self.window_width = WIN_WIDTH
         self.window_height = WIN_HEIGHT
-        self.player = Player1(725, 300, 24, 48)
+        self.player = Player1(725, 300, 32, 64)
         self.boss = Boss1(128, 128)
         self.game_state = "small_game"
         pg.init()
         self.window = pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
         self.fps = pg.time.Clock()
         self.cooldown = 0
-        self.all_entity = []
+        self.all_entity = [Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8)]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -63,19 +63,45 @@ class BossGame:
         else:
             pg.draw.rect(self.window, (100 - self.time * 25, 100, 100 - self.time * 25),
                          (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
-        if self.player.blink <= 0:
-            pg.draw.rect(self.window, (0, 0, 0),
-                         (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
-        else:
-            pg.draw.rect(self.window, (75, 75, 75),
-                         (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
 
         for sprite in self.all_entity:
-            if sprite.name != 'damage':
-                self.window.blit(sprite.get_sheet(random.randint(0, 4) * 16, 0, 16, 16), (sprite.x, sprite.y))
+            if sprite.name == 'attack':
+                s = pg.transform.rotate(sprite.get_sheet(random.randint(0, sprite.img_x - 1),
+                                                         random.randint(0, sprite.img_y - 1)), random.randint(0, 360))
+                self.window.blit(s, (sprite.x, sprite.y))
+            elif sprite.name == 'player':
+                if self.player.blink <= 0:
+                    keys = pg.key.get_pressed()
+                    mouse = pg.mouse.get_pressed()
+                    if mouse[0]:
+                        if keys[pg.K_d]:
+                            self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                              4), (sprite.x, sprite.y))
+                        elif keys[pg.K_a]:
+                            self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                              3), (sprite.x, sprite.y))
+                        else:
+                            self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                              5), (sprite.x, sprite.y))
+                    else:
+                        if keys[pg.K_d]:
+                            self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                              1), (sprite.x, sprite.y))
+                        elif keys[pg.K_a]:
+                            self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                              0), (sprite.x, sprite.y))
+                        else:
+                            self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                              2), (sprite.x, sprite.y))
+                    if sprite.animate >= sprite.img_x:
+                        sprite.animate = 0
+                    else:
+                        sprite.animate += 0.1
+                else:
+                    pg.draw.rect(self.window, (75, 75, 75),
+                                 (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
 
     def update(self):
-
         if self.time > 4:
             self.boss.boss_update()
         self.player.player_update()
@@ -99,9 +125,12 @@ class BossGame:
                 elif not sprite.attack1():
                     self.all_entity.remove(sprite)
 
+        self.all_entity[0].x = self.player.x
+        self.all_entity[0].y = self.player.y
+
         if self.player.attack():
             self.all_entity.append(Sprites('attack', self.player.x + self.player.size[0] / 2 - 5, self.player.y,
-                                           10, 10, 'img/fireball.png'))
+                                           16, 16, 'img/fireball.png', 5, 1))
 
     def colision(self):
         if self.cooldown <= 0 and self.player.blink < 1:
@@ -216,7 +245,7 @@ class Player1:
 
 
 class Sprites:
-    def __init__(self, name, x, y, width, height, img):
+    def __init__(self, name, x, y, width, height, img, img_x, img_y):
         self.name = name
         self.x = x
         self.y = y
@@ -224,10 +253,13 @@ class Sprites:
         self.rect = (self.x, self.y, self.size[0], self.size[1])
         self.target = self.direction()
         self.sheet = pg.image.load(img)
+        self.img_x = img_x
+        self.img_y = img_y
+        self.animate = 0
 
-    def get_sheet(self, x, y, width, height):
-        sprite = pg.Surface([width, height])
-        sprite.blit(self.sheet, (0, 0), (x, y, width, height))
+    def get_sheet(self, x, y):
+        sprite = pg.Surface([self.size[0], self.size[1]])
+        sprite.blit(self.sheet, (0, 0), (x * self.size[0], y * self.size[1], self.size[0], self.size[1]))
         sprite.set_colorkey(BLACK)
         return sprite
 
