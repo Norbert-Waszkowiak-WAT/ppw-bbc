@@ -93,7 +93,7 @@ class BossGame:
                         else:
                             self.window.blit(sprite.get_sheet(int(sprite.animate),
                                                               2), (sprite.x, sprite.y))
-                    if sprite.animate >= sprite.img_x:
+                    if sprite.animate >= sprite.img_x - 1:
                         sprite.animate = 0
                     else:
                         sprite.animate += 0.1
