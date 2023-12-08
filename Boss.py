@@ -19,7 +19,9 @@ class BossGame:
         self.window = pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
         self.fps = pg.time.Clock()
         self.cooldown = 0
-        self.all_entity = [Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8)]
+        self.all_entity = [Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8),
+                           Sprites('damage', BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2,
+                                   'img/gradient.png')]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -46,6 +48,9 @@ class BossGame:
     def draw(self):
         self.window.fill((50, 50, 50))
         pg.draw.rect(self.window, (100, 100, 100), (BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2))
+
+        if self.all_entity[1].name == 'damage' and self.cooldown > 0:
+            self.window.blit(self.all_entity[1].get_sheet(0, 0), (self.all_entity[1].x, self.all_entity[1].y))
 
         health_rect = pg.draw.rect(self.window, (255, 0, 0),
                                    (WIN_WIDTH / 2 - 250, WIN_HEIGHT - 20, self.boss.health / 2, 20))
@@ -166,7 +171,7 @@ class Player1:
         self.x_vel = 0
         self.y_vel = 0
         self.energy = 100
-        self.health = 2
+        self.health = 10
         self.blink = 0
 
         """self.image = self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height)
@@ -224,9 +229,17 @@ class Player1:
                 self.x_vel = 0
             self.x_vel -= (self.x_vel // 2) - 1
 
-        if keys[pg.K_LSHIFT] and self.energy >= 30 and self.blink <= 0:
-            self.blink = 45
-            self.energy -= 30
+        if keys[pg.K_LSHIFT] and self.energy >= 1:
+            if self.blink == 0 and self.energy >= 15:
+                self.blink = 2
+                self.energy -= 15
+            elif self.blink > 0:
+                self.blink = 2
+                self.energy -= 1
+            else:
+                self.blink = 0
+        else:
+            self.blink = 0
 
     def attack(self):
         mouse = pg.mouse.get_pressed()
@@ -245,7 +258,7 @@ class Player1:
 
 
 class Sprites:
-    def __init__(self, name, x, y, width, height, img, img_x, img_y):
+    def __init__(self, name, x, y, width, height, img, img_x=1, img_y=1):
         self.name = name
         self.x = x
         self.y = y
@@ -253,6 +266,8 @@ class Sprites:
         self.rect = (self.x, self.y, self.size[0], self.size[1])
         self.target = self.direction()
         self.sheet = pg.image.load(img)
+        if img_x == img_y == 1:
+            self.sheet = pg.transform.scale(self.sheet, (self.size[0], self.size[1]))
         self.img_x = img_x
         self.img_y = img_y
         self.animate = 0
