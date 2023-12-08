@@ -20,8 +20,7 @@ class BossGame:
         self.fps = pg.time.Clock()
         self.cooldown = 0
         self.all_entity = [Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8),
-                           Sprites('damage', BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2,
-                                   'img/gradient.png')]
+                           Sprites('boss', self.boss.x, self.boss.y, 128, 128, 'img/Boss.png', 2, 2)]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -49,9 +48,6 @@ class BossGame:
         self.window.fill((50, 50, 50))
         pg.draw.rect(self.window, (100, 100, 100), (BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2))
 
-        if self.all_entity[1].name == 'damage' and self.cooldown > 0:
-            self.window.blit(self.all_entity[1].get_sheet(0, 0), (self.all_entity[1].x, self.all_entity[1].y))
-
         health_rect = pg.draw.rect(self.window, (255, 0, 0),
                                    (WIN_WIDTH / 2 - 250, WIN_HEIGHT - 20, self.boss.health / 2, 20))
         self.window.blit(pg.font.Font(None, 36).render("Boss Health", True, (255, 255, 255)), health_rect)
@@ -62,19 +58,14 @@ class BossGame:
                                      (WIN_WIDTH - 10, 10), 35)
         self.window.blit(pg.font.Font(None, 36).render(str(int(self.player.energy)), True, (0, 0, 0)), energy_cylc)
 
-        if self.time > 4:
-            pg.draw.rect(self.window, (0, 100, 0),
-                         (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
-        else:
-            pg.draw.rect(self.window, (100 - self.time * 25, 100, 100 - self.time * 25),
-                         (self.boss.x, self.boss.y, self.boss.size[0], self.boss.size[1]))
-
         for sprite in self.all_entity:
-            if sprite.name == 'attack':
+            if sprite.name == 'attack' or sprite.name == 'particle':
                 s = pg.transform.rotate(sprite.get_sheet(random.randint(0, sprite.img_x - 1),
                                                          random.randint(0, sprite.img_y - 1)), random.randint(0, 360))
                 self.window.blit(s, (sprite.x, sprite.y))
             elif sprite.name == 'player':
+                sprite.x = self.player.x
+                sprite.y = self.player.y
                 if self.player.blink <= 0:
                     keys = pg.key.get_pressed()
                     mouse = pg.mouse.get_pressed()
@@ -105,6 +96,17 @@ class BossGame:
                 else:
                     pg.draw.rect(self.window, (75, 75, 75),
                                  (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
+            elif sprite.name == 'boss':
+                if self.boss.x_distance >= 0:
+                    self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                      0), (sprite.x, sprite.y))
+                else:
+                    self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                      1), (sprite.x, sprite.y))
+                if sprite.animate >= sprite.img_x - 1:
+                    sprite.animate = 0
+                else:
+                    sprite.animate += 0.1
 
     def update(self):
         if self.time > 4:
@@ -126,15 +128,22 @@ class BossGame:
             if sprite.name == "attack":
                 if pg.Rect(sprite.rect).colliderect(self.boss.boss_rect):
                     self.boss.health -= 1
+                    for i in range(4):
+                        self.all_entity.append(Sprites('particle', sprite.x,
+                                                       sprite.y, 8, 8, 'img/fireball.png', 10, 2))
                     self.all_entity.remove(sprite)
                 elif not sprite.attack1():
                     self.all_entity.remove(sprite)
+            if sprite.name == "particle" and not sprite.particle():
+                self.all_entity.remove(sprite)
 
         self.all_entity[0].x = self.player.x
         self.all_entity[0].y = self.player.y
+        self.all_entity[1].x = self.boss.x
+        self.all_entity[1].y = self.boss.y
 
         if self.player.attack():
-            self.all_entity.append(Sprites('attack', self.player.x + self.player.size[0] / 2 - 5, self.player.y,
+            self.all_entity.append(Sprites('attack', self.player.x, self.player.y + 20,
                                            16, 16, 'img/fireball.png', 5, 1))
 
     def colision(self):
@@ -142,6 +151,9 @@ class BossGame:
             if self.boss.boss_rect.colliderect(self.player.player_rect):
                 self.cooldown = 60
                 self.player.health -= 1
+                for i in range(30):
+                    self.all_entity.append(Sprites('particle', self.player.x, self.player.y + random.randint(-25, 25),
+                                                   8, 8, 'img/gradient.png', 4, 4))
         else:
             self.cooldown -= 1
 
@@ -173,12 +185,7 @@ class Player1:
         self.energy = 100
         self.health = 10
         self.blink = 0
-
-        """self.image = self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height)
-
-        self.rect = self.image.get_rect()
-        self.rect.topleft = (x, y)"""
-
+        self.cooldown = 0
         self.air = False
 
     def update_pos(self):
@@ -243,13 +250,15 @@ class Player1:
 
     def attack(self):
         mouse = pg.mouse.get_pressed()
-        if mouse[0] and self.energy >= 1:
-            self.energy -= 1
+        if mouse[0] and self.cooldown == 0:
+            self.cooldown = 7
             return True
 
     def resources(self):
         if self.energy < 100:
             self.energy += 0.25
+        if self.cooldown > 0:
+            self.cooldown -= 1
 
     def player_update(self):
         self.resources()
@@ -271,6 +280,8 @@ class Sprites:
         self.img_x = img_x
         self.img_y = img_y
         self.animate = 0
+        self.vel_x = None
+        self.vel_y = None
 
     def get_sheet(self, x, y):
         sprite = pg.Surface([self.size[0], self.size[1]])
@@ -280,7 +291,7 @@ class Sprites:
 
     def direction(self):
         d = pg.mouse.get_pos()
-        direct = (d[0] - self.x, d[1] - self.y)
+        direct = (d[0] - self.x - 8, d[1] - self.y - 8)
         lenght = hypot(*direct)
         if lenght == 0.0:
             direct = (0, -1)
@@ -298,6 +309,19 @@ class Sprites:
         else:
             return False
 
+    def particle(self):
+        if self.vel_x == self.vel_y is None:
+            self.vel_y = random.randint(1, 7) / -2
+            self.vel_x = random.randint(-75, 75) / 5
+        if WIN_WIDTH - BORDER > self.x > BORDER and BORDER < self.y < WIN_HEIGHT - BORDER:
+            self.x += self.vel_x
+            self.y += self.vel_y
+            self.vel_x -= self.vel_x / 4
+            self.vel_y += self.vel_y / 4 + 1
+            return True
+        else:
+            return False
+
 
 class Boss1:
     def __init__(self, width, height):
@@ -309,7 +333,7 @@ class Boss1:
         self.x_distance = 0
         self.y_distance = 0
         self.size = [width, height]
-        self.boss_rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
+        self.boss_rect = pg.Rect(self.x + 16, self.y + 16, self.size[0] - 32, self.size[1] - 32)
 
     def boss_update(self):
         if self.x + 2 > self.random_x > self.x - 2 and self.y + 2 > self.random_y > self.y - 2:
