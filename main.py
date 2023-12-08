@@ -59,10 +59,12 @@ class Game:
                     River(self, j, i, x)
                     x = (x + 1) % 3
                 elif column == 'S':
-                    Boss(self, j, i, k)
+                    t = "S"
+                    Boss(self, j, i, k, t)
                     k += 1
                 elif column == 's':
-                    Boss(self, j, i, k)
+                    t = 's'
+                    Boss(self, j, i, k, t)
                     k += 1
                 elif column == 't':
                     Tree(self, j, i, 1)

@@ -525,7 +525,7 @@ class Attack(pygame.sprite.Sprite):
 
 
 class Boss(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, k):
+    def __init__(self, game, x, y, k, t):
         self.game = game
         self._layer = BOSS_LAYER
         self.groups = self.game.all_sprites, self.game.bosses
@@ -537,11 +537,15 @@ class Boss(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(512, 576, self.width, self.height)
-
+        if t == 'S':
+            self.image = self.game.terrain_spritesheet.get_sprite(512, 576, self.width, self.height)
+        elif t == 's':
+            self.image = self.game.terrain_spritesheet.get_sprite(192, 736, self.width, self.height)
+    
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
 
 
 class Text:
