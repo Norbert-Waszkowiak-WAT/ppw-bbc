@@ -19,8 +19,8 @@ class BossGame:
         self.window = pg.display.set_mode((self.window_width, self.window_height), pg.RESIZABLE)
         self.fps = pg.time.Clock()
         self.cooldown = 0
-        self.all_entity = [Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8),
-                           Sprites('boss', self.boss.x, self.boss.y, 128, 128, 'img/Boss.png', 2, 2)]
+        self.all_entity = [Sprites('boss', self.boss.x, self.boss.y, 128, 128, 'img/Boss.png', 2, 2),
+                           Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8)]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -63,6 +63,17 @@ class BossGame:
                 s = pg.transform.rotate(sprite.get_sheet(random.randint(0, sprite.img_x - 1),
                                                          random.randint(0, sprite.img_y - 1)), random.randint(0, 360))
                 self.window.blit(s, (sprite.x, sprite.y))
+            elif sprite.name == 'boss':
+                if self.boss.x_distance >= 0:
+                    self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                      0), (sprite.x, sprite.y))
+                else:
+                    self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                      1), (sprite.x, sprite.y))
+                if sprite.animate >= sprite.img_x - 1:
+                    sprite.animate = 0
+                else:
+                    sprite.animate += 0.1
             elif sprite.name == 'player':
                 sprite.x = self.player.x
                 sprite.y = self.player.y
@@ -96,17 +107,6 @@ class BossGame:
                 else:
                     pg.draw.rect(self.window, (75, 75, 75),
                                  (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
-            elif sprite.name == 'boss':
-                if self.boss.x_distance >= 0:
-                    self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                      0), (sprite.x, sprite.y))
-                else:
-                    self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                      1), (sprite.x, sprite.y))
-                if sprite.animate >= sprite.img_x - 1:
-                    sprite.animate = 0
-                else:
-                    sprite.animate += 0.1
 
     def update(self):
         if self.time > 4:
@@ -137,10 +137,10 @@ class BossGame:
             if sprite.name == "particle" and not sprite.particle():
                 self.all_entity.remove(sprite)
 
-        self.all_entity[0].x = self.player.x
-        self.all_entity[0].y = self.player.y
-        self.all_entity[1].x = self.boss.x
-        self.all_entity[1].y = self.boss.y
+        self.all_entity[1].x = self.player.x
+        self.all_entity[1].y = self.player.y
+        self.all_entity[0].x = self.boss.x
+        self.all_entity[0].y = self.boss.y
 
         if self.player.attack():
             self.all_entity.append(Sprites('attack', self.player.x, self.player.y + 20,
@@ -151,6 +151,7 @@ class BossGame:
             if self.boss.boss_rect.colliderect(self.player.player_rect):
                 self.cooldown = 60
                 self.player.health -= 1
+                pg.mixer.Sound('sounds/metal_pipe.mp3').play()
                 for i in range(30):
                     self.all_entity.append(Sprites('particle', self.player.x, self.player.y + random.randint(-25, 25),
                                                    8, 8, 'img/gradient.png', 4, 4))
