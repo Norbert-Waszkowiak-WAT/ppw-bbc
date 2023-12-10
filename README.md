@@ -53,6 +53,7 @@ Poprawa kodu, połączenie repozytoriów oraz dodanie grafik 04.12.2023 <br>
 
 Dodanie particli oraz efektu otrzymywania obrażeń od bosa 08.12.2023 <br>
 
+Dodanie ataków jednego z bosów moraz głupich efektów dźwiękowych 12.122023 <br> 
 
 Plan na grę <br>
 
