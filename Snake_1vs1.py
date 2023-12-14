@@ -23,16 +23,16 @@ class SnakeGame:
         self.snake_position = [4 * self.pixel, 350]
 
         self.bot_body = [[50 * self.pixel, 350],
-                        [51 * self.pixel, 350],
-                        [52 * self.pixel, 350],
-                        [53 * self.pixel, 350]]
+                         [51 * self.pixel, 350],
+                         [52 * self.pixel, 350],
+                         [53 * self.pixel, 350]]
         self.snake_body = [[4 * self.pixel, 350],
-                          [3 * self.pixel, 350],
-                          [2 * self.pixel, 350],
-                          [1 * self.pixel, 350]]
+                           [3 * self.pixel, 350],
+                           [2 * self.pixel, 350],
+                           [1 * self.pixel, 350]]
 
         self.fruit_position = [random.randrange(0, (self.window_width // self.pixel)) * self.pixel,
-                              random.randrange(0, (self.window_height // self.pixel)) * self.pixel]
+                               random.randrange(0, (self.window_height // self.pixel)) * self.pixel]
         self.fruit_spawn = True
 
         self.bot_direction = 'L'
@@ -56,6 +56,7 @@ class SnakeGame:
         return wall
 
     def game_over(self):
+        pg.mixer.Sound('sounds/metal_pipe.mp3').play()
         my_font = self.pg.font.SysFont('times new roman', 50)
         game_over_surface = my_font.render('Game over', True, (255, 0, 0))
         game_over_rect = game_over_surface.get_rect()
@@ -122,12 +123,13 @@ class SnakeGame:
             if self.snake_position[0] == self.fruit_position[0] and self.snake_position[1] == self.fruit_position[1]:
                 self.score += 1
                 self.fruit_spawn = False
+                pg.mixer.Sound('sounds/get_point.mp3').play()
             else:
                 self.snake_body.pop()
 
             if not self.fruit_spawn:
                 self.fruit_position = [random.randrange(1, (self.window_width // self.pixel)) * self.pixel,
-                                      random.randrange(1, (self.window_height // self.pixel)) * self.pixel]
+                                       random.randrange(1, (self.window_height // self.pixel)) * self.pixel]
 
             self.fruit_spawn = True
             self.window.fill((0, 0, 0))
@@ -170,6 +172,7 @@ class SnakeGame:
                 if len(warning) == 3:
                     if self.bot_direction != 'x':
                         self.knockdown += 1
+                        pg.mixer.Sound('sounds/metal_pipe.mp3').play()
                     self.bot_change_to = 'x'
                     self.bot_direction = 'x'
                 elif warning.count('U') != 1 and self.bot_direction != 'D':
@@ -237,6 +240,7 @@ class SnakeGame:
             self.bot_body.insert(0, list(self.bot_position))
             if self.bot_position[0] == self.fruit_position[0] and self.bot_position[1] == self.fruit_position[1]:
                 self.fruit_spawn = False
+                pg.mixer.Sound('sounds/get_point.mp3').play()
             else:
                 self.bot_body.pop()
 

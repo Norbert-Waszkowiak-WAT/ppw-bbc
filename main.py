@@ -5,7 +5,7 @@ from Snake_1vs1 import *
 from Boss import *
 import sys
 
-
+win = 0
 class Game:
     def __init__(self):
 
@@ -90,8 +90,11 @@ class Game:
     def kill_boss(self, k):
         for sprite in self.all_sprites:
             if isinstance(sprite, Boss):
+                if sprite.k == 1:
+                    self.victory()
                 if sprite.k == k:
                     sprite.kill()
+
     def new(self):
 
         self.playing = True
@@ -316,7 +319,17 @@ class Game:
         self.new_game_button.kill()
         self.exit_button.kill()
         self.continue_button.kill()
-
+    def victory(self):
+        game_over_font = pg.font.Font(None, 36)
+        game_over_text = game_over_font.render("Przestań naciskać x", True, (0, 255, 0))
+        game_over_rect = game_over_text.get_rect()
+        game_over_rect.center = (WIN_WIDTH // 2, WIN_HEIGHT // 2)
+        self.screen.fill((0, 0, 0))
+        self.screen.blit(game_over_text, game_over_rect)
+        pg.display.flip()
+        pg.time.wait(1000)
+        pygame.quit()
+        sys.exit()
     def pause(self):
         self.fade_sprites()
         for event in pygame.event.get():
