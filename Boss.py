@@ -68,6 +68,13 @@ class BossGame:
                                                          random.randint(0, sprite.img_y - 1)), sprite.animate)
                 self.window.blit(s, (sprite.x, sprite.y))
                 sprite.animate += 15
+            elif sprite.name == 'skeleton':
+                self.window.blit(sprite.get_sheet(int(sprite.animate),
+                                                  sprite.rand), (sprite.x, sprite.y))
+                if sprite.animate <= sprite.img_x - 1:
+                    sprite.animate += 0.1
+                else:
+                    sprite.animate = 0
             elif sprite.name == 'boss':
                 if self.boss.x_distance >= 0:
                     self.window.blit(sprite.get_sheet(int(sprite.animate),
@@ -143,6 +150,19 @@ class BossGame:
                 self.all_entity.remove(sprite)
             elif sprite.name == "skull" and not sprite.skull():
                 self.all_entity.remove(sprite)
+                for i in range(5):
+                    self.all_entity.append(Sprites('particle', sprite.x,
+                                                   sprite.y - 5, 8, 8, 'img/skulls.png', 16, 4))
+            elif sprite.name == "skeleton":
+                if not sprite.skeleton():
+                    self.all_entity.remove(sprite)
+                    for i in range(10):
+                        self.all_entity.append(Sprites('particle', sprite.x,
+                                                       sprite.y - 5, 8, 8, 'img/skulls.png', 16, 4))
+                elif sprite.x > self.player.x:
+                    sprite.rand = 0
+                else:
+                    sprite.rand = 1
 
         self.all_entity[1].x = self.player.x
         self.all_entity[1].y = self.player.y
@@ -152,10 +172,13 @@ class BossGame:
         if self.player.attack():
             self.all_entity.append(Sprites('attack', self.player.x, self.player.y + 20,
                                            16, 16, 'img/fireball.png', 5, 1))
-        if self.boss.attack_id == 1 and 360 > self.boss.attack_faze > 1:
+        if self.boss.attack_id == 1 and 300 > self.boss.attack_faze > 1:
             if random.randint(0, 3) == 0:
                 self.all_entity.append(Sprites('skull', random.randint(BORDER, WIN_WIDTH - BORDER), -32,
                                                32, 32, 'img/skulls.png', 1, 1, random.randint(0, 3)))
+        elif self.boss.attack_id == 2 and self.boss.attack_faze == 30:
+            self.all_entity.append(Sprites('skeleton', WIN_WIDTH - BORDER - 64, WIN_HEIGHT - BORDER - 96,
+                                           64, 96, 'img/skeleton.png', 28, 2, 0))
 
     def colision(self):
         if self.cooldown <= 0 and self.player.blink < 1:
@@ -168,7 +191,6 @@ class BossGame:
                                                    8, 8, 'img/gradient.png', 4, 4))
             for sprite in self.all_entity:
                 if sprite.coli_rect.colliderect(self.player.player_rect):
-                    print("kys")
                     if sprite.name == "skull":
                         self.cooldown = 60
                         self.player.health -= 1
@@ -308,6 +330,7 @@ class Sprites:
         self.vel_x = None
         self.vel_y = None
         self.rand = rand
+        self.health = None
 
     def get_sheet(self, x, y):
         sprite = pg.Surface([self.size[0], self.size[1]])
@@ -362,6 +385,28 @@ class Sprites:
         else:
             return False
 
+    def skeleton(self):
+        if self.vel_x is None:
+            self.vel_x = 0
+            self.health = 25
+        if self.health > 0:
+            if 7 > self.animate > 6 or 21 > self.animate >= 20:
+                if self.rand == 0:
+                    self.vel_x -= 0.4
+                else:
+                    self.vel_x += 0.4
+            elif 8 > self.animate > 7 or 22 > self.animate > 21:
+                if self.rand == 0:
+                    self.vel_x += 0.4
+                else:
+                    self.vel_x -= 0.4
+            elif self.animate > 22 or 20 > self.animate > 8 or 6 > self.animate:
+                self.vel_x = 0
+            self.x += self.vel_x
+            return True
+        else:
+            return False
+
 
 class Boss1:
     def __init__(self, width, height):
@@ -392,7 +437,7 @@ class Boss1:
                 self.x_distance = (self.random_x - self.x)
                 self.y_distance = (self.random_y - self.y)
                 if self.wait < 1:
-                    self.attack_id = random.randint(0, 1)
+                    self.attack_id = random.randint(0, 2)
                     self.attack_faze = 0
                     self.wait = random.randint(4, 8)
                 else:
@@ -432,7 +477,18 @@ class Boss1:
                 self.random_y = BORDER + self.size[1] / 2
                 self.x_distance = (self.random_x - self.x)
                 self.y_distance = (self.random_y - self.y)
-            elif self.attack_faze == 420:
+            elif self.attack_faze == 360:
+                self.vel = 12
+                self.attack_id = None
+            self.attack_faze += 1
+        elif self.attack_id == 2:  # New Attack
+            if self.attack_faze == 0:
+                self.vel = 18
+                self.random_x = (WIN_WIDTH - self.size[0] / 2) / 2
+                self.random_y = BORDER + self.size[1] / 2
+                self.x_distance = (self.random_x - self.x)
+                self.y_distance = (self.random_y - self.y)
+            elif self.attack_faze == 360:
                 self.vel = 12
                 self.attack_id = None
             self.attack_faze += 1
