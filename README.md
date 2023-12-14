@@ -47,6 +47,8 @@ Stworzenie skrzyni oraz animacji zdobywania broni 21.11.2023 <br>
 
 Poprawa interakcji z rzeką 26.11.2023 <br>
 
+Dodanie nowych ataków do boss'a 13.12.2023 <br>
+
 
 
 Dodanie możliwości ataku i znikania w Bossie 01.12.2023 <br>
