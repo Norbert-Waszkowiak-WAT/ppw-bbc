@@ -2,6 +2,7 @@ import pygame
 import math
 import random
 from numbers import *
+from pygame.locals import *
 
 
 class Spritesheet:
@@ -683,7 +684,7 @@ class Weapon(pygame.sprite.Sprite):
         self.x = x
         self.y = y
         self.width = TILESIZE * 2
-        self.height = TILESIZE * 1.5
+        self.height = TILESIZE * 2
 
         self.image = self.game.terrain_spritesheet.get_sprite(608, 576, self.width, self.height)
 
@@ -694,11 +695,18 @@ class Weapon(pygame.sprite.Sprite):
         self.scaled_image = self.image.copy()
 
     def scale_image(self, scale_factor):
-        # Skaluj obraz i przypisz do scaled_image
+        #"""
+        new_width = int(self.rect.width * scale_factor)
+        new_height = int(self.rect.height * scale_factor)
+        self.scaled_image = pygame.transform.smoothscale(self.image, (new_width, new_height))
+        #"""
+
+        """
         self.scaled_image = pygame.transform.scale(self.image, (
             int(self.rect.width * scale_factor),
             int(self.rect.height * scale_factor)
+        
         ))
-
+        """
     def animate(self):
         pass
