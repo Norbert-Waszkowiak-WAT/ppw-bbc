@@ -5,18 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="326e2a13-6b68-408d-85c0-819a882b25fa" name="Changes" comment="dodanie możliwości wygrania gry">
-      <change afterPath="$PROJECT_DIR$/img/Boss.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/electro_ball.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/gradient.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/lightning.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/img/skulls.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sounds/get_point.mp3" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/sounds/metal_pipe.mp3" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/img/skeleton.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Boss.py" beforeDir="false" afterPath="$PROJECT_DIR$/Boss.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Snake_1vs1.py" beforeDir="false" afterPath="$PROJECT_DIR$/Snake_1vs1.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
