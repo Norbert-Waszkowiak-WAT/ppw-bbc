@@ -61,11 +61,11 @@ class Game:
                 elif column == 'S':
                     t = "S"
                     Boss(self, j, i, k, t)
-                    k += 1
+                    k = 0
                 elif column == 's':
                     t = 's'
+                    k = 1
                     Boss(self, j, i, k, t)
-                    k += 1
                 elif column == 't':
                     Tree(self, j, i, 1)
                 elif column == 'T':
@@ -88,11 +88,12 @@ class Game:
         return None
 
     def kill_boss(self, k):
+        print(k)
         for sprite in self.all_sprites:
             if isinstance(sprite, Boss):
-                if sprite.k == 1:
+                if k == 1:
                     self.victory()
-                if sprite.k == k:
+                elif sprite.k == k:
                     sprite.kill()
 
     def new(self):
