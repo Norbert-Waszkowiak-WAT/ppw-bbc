@@ -65,8 +65,6 @@ Rozwój postaci w miarę trwania rozgrywki <br>
 
 Między grami występowanie NPC (misje poboczne) <br>
 
-Gra w formacie top-view <br>
-
 Fabuła <br>
 
 Muzyka i efekty dźwiękowe <br>
