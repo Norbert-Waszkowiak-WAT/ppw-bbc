@@ -31,6 +31,7 @@ class Game:
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
         self.rivers = pygame.sprite.LayeredUpdates()
+        self.bridges = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
         self.attacks = pygame.sprite.LayeredUpdates()
         self.bosses = pygame.sprite.LayeredUpdates()
@@ -38,6 +39,7 @@ class Game:
         self.buttons = pygame.sprite.LayeredUpdates()
         self.chests = pygame.sprite.LayeredUpdates()
         self.weapons = pygame.sprite.LayeredUpdates()
+
 
         self.i = 0
 
@@ -48,16 +50,17 @@ class Game:
         y = 1
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
-                Ground(self, j, i)
+                if column == 'R' or column == 'b':
+                    River(self, j, i, x)
+                    x = (x + 1) % 3
+                else:
+                    Ground(self, j, i)
                 if column == 'B':
                     Block(self, j, i)
                 elif column == 'E':
                     Enemy(self, j, i)
                 elif column == 'P':
                     Player(self, j, i)
-                elif column == 'R':
-                    River(self, j, i, x)
-                    x = (x + 1) % 3
                 elif column == 'S':
                     t = "S"
                     Boss(self, j, i, k, t)
@@ -73,6 +76,8 @@ class Game:
                 elif column == 'c':
                     Chest(self, j, i, y, 0)
                     y += 1
+                elif column == "b":
+                    Bridge(self, j, i)
     def create_buttons(self):
         self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
         self.new_game_button = Button(self, 500, 400, self.image, 3)
@@ -236,7 +241,7 @@ class Game:
     def snake_game(self):
         self.dialouge = True
         #"""
-        self.snake_messages = ["Hej głupi głupku!", "Musisz udowdnić że władasz lepiej swoim pythonem ode mnie", "Zagrajmy. Musisz 3 razy ogłuszyć karpia. Grałeś w slither.io? Coś w tym stylu. Obyś zdechł <3" ,"Jeśli jesteś słabiutki i nie jesteś w sranie pokonać hipermaszyny stworzonej przez największe mózgi tego świata. Naciśnij x"]
+        self.snake_messages = ["Hej głupi głupku!", "Musisz udowdnić że władasz lepiej swoim pythonem ode mnie", "Zagrajmy. Musisz 3 razy ogłuszyć karpia. Grałeś w slither.io? Coś w tym stylu. Obyś zdechł <3" ,"Jeśli jesteś słabiutki i nie jesteś w stanie pokonać hipermaszyny stworzonej przez największe mózgi tego świata. Naciśnij x"]
         #"""
         #self.snake_messages = ["kys"]
         text = Text(self, self.snake_messages)

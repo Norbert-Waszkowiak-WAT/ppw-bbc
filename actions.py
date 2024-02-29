@@ -139,17 +139,20 @@ class Player(pygame.sprite.Sprite):
 
     def collide_obstacles(self, direction):
         for river in self.game.rivers:
-            if river.rect.colliderect(self.rect):
-                if direction == 'x':
-                    if self.x_change > 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
-                        self.rect.right = river.rect.left
-                    elif self.x_change < 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
-                        self.rect.left = river.rect.right
-                if direction == 'y':
-                        if self.y_change < 0 and self.rect.top <= river.rect.bottom - 20:
-                            self.rect.top = river.rect.bottom - 20
-                        elif self.y_change > 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
-                            self.rect.bottom = river.rect.top
+            for bridge in self.game.bridges:
+                if bridge.hitbox.colliderect(self.rect):
+                    pass
+                elif river.rect.colliderect(self.rect):
+                    if direction == 'x':
+                        if self.x_change > 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
+                            self.rect.right = river.rect.left
+                        elif self.x_change < 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
+                            self.rect.left = river.rect.right
+                    if direction == 'y':
+                            if self.y_change < 0 and self.rect.top <= river.rect.bottom - 20:
+                                self.rect.top = river.rect.bottom - 20
+                            elif self.y_change > 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
+                                self.rect.bottom = river.rect.top
 
         for block in self.game.blocks:
             if block.rect.colliderect(self.rect):
@@ -442,6 +445,24 @@ class Ground(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
+class Bridge(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.bridges
+        pygame.sprite.Sprite.__init__(self, self.groups)
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE * 2
+        self.height = TILESIZE
+        self.image = self.game.terrain_spritesheet.get_sprite(448, 576, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.hitbox = self.rect.inflate(10, 0)
 
 
 class Attack(pygame.sprite.Sprite):

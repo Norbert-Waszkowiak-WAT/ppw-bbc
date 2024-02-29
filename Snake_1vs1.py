@@ -286,5 +286,3 @@ class Printer:
             for pos in self.game.bot.bot_body[1:]:
                 color -= 200 // len(self.game.bot.bot_body)
                 pg.draw.rect(self.game.screen, (color, 0, 0), pg.Rect(pos[0], pos[1], self.game.pixel, self.game.pixel))
-
-
