@@ -57,6 +57,12 @@ Dodanie nowych ataków do boss'a 13.12.2023 <br>
 Stworzenie menu głównego oraz pauzy w trakcie oraz zresetowanie gry po naciśnięciu new game <br>
 <img src="screeny_do_readme/menu.png" alt="a">
 
+dodanie nowej mini gierki gośc se zawala jetpackiem i omija lasery i rakiety, mołżiwość śmierci przegranej, jest ustalany maksymalny rekord <br> planowana wygrana gry po osiągnięciu progu <br>
+<img src="screeny_do_readme/jetpack.png" alt="a">
+
+Stworzenie menu głównego oraz pauzy w trakcie oraz zresetowanie gry po naciśnięciu restart w grze z jetpackiem <br>
+<img src="screeny_do_readme/menu_jetpack.png" alt="a">
+
 
 
 
