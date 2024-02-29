@@ -235,11 +235,10 @@ class Game:
 
     def snake_game(self):
         self.dialouge = True
-        """
-        self.snake_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
-                               ,"To jest czwarta wiadomość"]
-        """
-        self.snake_messages = ["kys"]
+        #"""
+        self.snake_messages = ["Hej głupi głupku!", "Musisz udowdnić że władasz lepiej swoim pythonem ode mnie", "Zagrajmy. Musisz 3 razy ogłuszyć karpia. Grałeś w slither.io? Coś w tym stylu. Obyś zdechł <3" ,"Jeśli jesteś słabiutki i nie jesteś w sranie pokonać hipermaszyny stworzonej przez największe mózgi tego świata. Naciśnij x"]
+        #"""
+        #self.snake_messages = ["kys"]
         text = Text(self, self.snake_messages)
 
         while self.dialouge:
