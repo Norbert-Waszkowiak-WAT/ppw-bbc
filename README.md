@@ -75,7 +75,7 @@ Dodanie całkowicie nowej w pełni skończonej minigierki - klasyczny space invi
 <img src="screeny_do_readme/shooter.png" alt="a">
 
 Stworzenie Background'u w Boss'ie <br>
-<img src="screeny_do_readme/Boss_Game.png" alt="a">
+<img src="" alt="a">
 
 Stworzenie HUD'a w grze Snake <br>
 <img src="screeny_do_readme/Snake_Game.png" alt="a">
