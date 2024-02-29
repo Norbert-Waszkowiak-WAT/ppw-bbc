@@ -6,7 +6,6 @@ import random
 from numbers import *
 
 
-
 class BossGame:
     def __init__(self, main):
         self.main = main
@@ -21,7 +20,8 @@ class BossGame:
         self.fps = pg.time.Clock()
         self.cooldown = 0
         self.all_entity = [Sprites('boss', self.boss.x, self.boss.y, 128, 128, 'img/Boss.png', 2, 2),
-                           Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8)]
+                           Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8),
+                           Sprites('background', 0, 0, 1536, 780, 'img/Boss_Background.png')]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -47,13 +47,11 @@ class BossGame:
         self.main.kill_boss(1)
         #self.main.playing = False
 
-
     def draw(self):
-        self.window.fill((50, 50, 50))
-        pg.draw.rect(self.window, (100, 100, 100), (BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2))
+        self.window.blit(self.all_entity[2].get_sheet(0, 0), (self.all_entity[2].x, self.all_entity[2].y))
 
         health_rect = pg.draw.rect(self.window, (255, 0, 0),
-                                   (WIN_WIDTH / 2 - 250, WIN_HEIGHT - 20, self.boss.health / 2, 20))
+                                   (WIN_WIDTH / 2 - 250, 0, self.boss.health / 2, 20))
         self.window.blit(pg.font.Font(None, 36).render("Boss Health", True, (255, 255, 255)), health_rect)
         health_cylc = pg.draw.circle(self.window, (255, 0, 0),
                                      (10, 10), 35)
