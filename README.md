@@ -71,6 +71,9 @@ dodanie nowej mini gierki gośc se zawala jetpackiem i omija lasery i rakiety, m
 Stworzenie menu głównego oraz pauzy w trakcie oraz zresetowanie gry po naciśnięciu restart w grze z jetpackiem <br>
 <img src="screeny_do_readme/menu_jetpack.png" alt="a">
 
+Dodanie całkowicie nowej w pełni skończonej minigierki - klasyczny space inviders <br>
+<img src="screeny_do_readme/shooter.png" alt="a">
+
 
 
 
