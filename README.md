@@ -33,10 +33,6 @@ Stworzenie dialogów związanych z interakcjami z elemantami 10.11.2023
 
 Połączenie głównej gry z drugą minigierką i obsłużenie eliminacji obiektów związanych z bosami na głownej mapie 13.112023 <br>
 
-Stworzenie menu głównego oraz pauzy w trakcie gry 17.11.2023 <br>
-
-Stworzenie resetu gry po naciśnięciu new game 18.11.2023 <br>
-
 Dodanie wszystkich podstawowych funkcji do bossfight'u 18.11.2023 <br>
 
 Stworzenie efektu przysłaniania obiektów przez gracza lub garcza przez obiekty w zależności od pozycji 19.11.2023 <br>
@@ -57,16 +53,10 @@ Dodanie ataków jednego z bosów oraz głupich efektów dźwiękowych 12.122023 
 
 Dodanie nowych ataków do boss'a 13.12.2023 <br>
 
-Plan na grę <br>
 
-Typowa gra rpg - przynajmniej 2 bossy <br>
+Stworzenie menu głównego oraz pauzy w trakcie oraz zresetowanie gry po naciśnięciu new game <br>
 
-Rozwój postaci w miarę trwania rozgrywki <br>
 
-Między grami występowanie NPC (misje poboczne) <br>
 
-Fabuła <br>
-
-Muzyka i efekty dźwiękowe <br>
 
 
