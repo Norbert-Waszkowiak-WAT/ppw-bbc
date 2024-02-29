@@ -23,6 +23,7 @@ BLUE = (0, 0, 255)
 WHITE = (255, 255, 255)
 
 BORDER = 30
+SNAKE_BORDER = 50
 
 #"""
 tilemap = [
