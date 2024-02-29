@@ -54,8 +54,8 @@ Dodanie ataków jednego z bosów oraz głupich efektów dźwiękowych 12.122023 
 Dodanie nowych ataków do boss'a 13.12.2023 <br>
 
 
-
-<img src="screeny_do_readme/menu.png" alt="Stworzenie menu głównego oraz pauzy w trakcie oraz zresetowanie gry po naciśnięciu new game">
+Stworzenie menu głównego oraz pauzy w trakcie oraz zresetowanie gry po naciśnięciu new game <br>
+<img src="screeny_do_readme/menu.png" alt="a">
 
 
 
