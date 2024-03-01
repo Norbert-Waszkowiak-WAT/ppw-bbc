@@ -195,16 +195,6 @@ class Game:
         self.victory_message()
 
 
-class CRT:
-    def __init__(self):
-        self.tv = pygame.image.load('img/tv.png').convert_alpha()
-        self.tv = pygame.transform.scale(self.tv, (screen_width, screen_height))
-
-
-
-    def draw(self):
-        self.tv.set_alpha(randint(75, 90))
-        screen.blit(self.tv, (0, 0))
 
 
 class Player(pygame.sprite.Sprite):
@@ -262,7 +252,7 @@ class Player(pygame.sprite.Sprite):
 class Alien(pygame.sprite.Sprite):
     def __init__(self, color, x, y):
         super().__init__()
-        file_path = 'img/' + color + '.png'
+        file_path = 'img/red.png'
         self.image = pygame.image.load(file_path).convert_alpha()
         self.rect = self.image.get_rect(topleft=(x, y))
 
@@ -329,7 +319,6 @@ screen_height = 750
 screen = pygame.display.set_mode((screen_width, screen_height))
 clock = pygame.time.Clock()
 game = Game()
-crt = CRT()
 
 ALIENLASER = pygame.USEREVENT + 1
 pygame.time.set_timer(ALIENLASER, 800)
