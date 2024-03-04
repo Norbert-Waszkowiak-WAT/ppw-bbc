@@ -42,7 +42,6 @@ class Game:
         with open('score.txt', 'r') as file:
             read = file.readlines()
             self.high_score = int(read[0])
-            self.lifetime = int(read[1])
 
     def draw_screen(self):
         self.screen.fill('black')
@@ -68,25 +67,18 @@ class Game:
         return top, bot, lase_line
 
     def draw_pause(self):
-        pygame.draw.rect(self.surface, (128, 128, 128, 150), [0, 0, self.WIDTH, self.HEIGHT])
-        pygame.draw.rect(self.surface, 'dark gray', [200, 150, 600, 50], 0, 10)
-        self.surface.blit(self.font.render('Game Paused. Escape Btn Resumes', True, 'black'), (220, 160))
         restart_btn = pygame.draw.rect(self.surface, 'white', [200, 220, 280, 50], 0, 10)
         self.surface.blit(self.font.render('Restart', True, 'black'), (220, 230))
         quit_btn = pygame.draw.rect(self.surface, 'white', [520, 220, 280, 50], 0, 10)
         self.surface.blit(self.font.render('Quit', True, 'black'), (540, 230))
-        pygame.draw.rect(self.surface, 'dark gray', [200, 300, 600, 50], 0, 10)
-        self.surface.blit(self.font.render(f'Lifetime Distance Ran: {int(self.lifetime)}', True, 'black'), (220, 310))
         self.screen.blit(self.surface, (0, 0))
         return restart_btn, quit_btn
 
     def modify_player_info(self):
         if self.distance > self.high_score:
             self.high_score = self.distance
-        self.lifetime += self.distance
         with open('score.txt', 'w') as file:
             file.write(str(int(self.high_score)) + '\n')
-            file.write(str(int(self.lifetime)))
 
     def check_colliding(self, player, bot_plat, top_plat, laser_line):
         coll = [False, False]
