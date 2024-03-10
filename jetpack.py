@@ -31,7 +31,6 @@ class Game:
         self.y_velocity = 0
         self.gravity = 0.4
 
-        self.rocket_counter = 0
         self.rocket_active = False
         self.rocket_delay = 0
         self.rocket_coords = []
@@ -67,10 +66,11 @@ class Game:
         return top, bot, lase_line
 
     def draw_pause(self):
-        restart_btn = pygame.draw.rect(self.surface, 'white', [200, 220, 280, 50], 0, 10)
-        self.surface.blit(self.font.render('Restart', True, 'black'), (220, 230))
-        quit_btn = pygame.draw.rect(self.surface, 'white', [520, 220, 280, 50], 0, 10)
-        self.surface.blit(self.font.render('Quit', True, 'black'), (540, 230))
+        pygame.draw.rect(self.surface, (128, 128, 128, 150), [0, 0, self.WIDTH, self.HEIGHT])
+        restart_btn = pygame.draw.rect(self.surface, 'white', [350, 220, 280, 50], 0, 10)
+        self.surface.blit(self.font.render('Restart', True, 'black'), (435, 232.5))
+        quit_btn = pygame.draw.rect(self.surface, 'white', [350, 300, 280, 50], 0, 10)
+        self.surface.blit(self.font.render('Quit', True, 'black'), (450, 312.5))
         self.screen.blit(self.surface, (0, 0))
         return restart_btn, quit_btn
 
@@ -125,9 +125,6 @@ class Game:
                 restart, quits = self.draw_pause()
 
             if not self.rocket_active and not self.pause:
-                self.rocket_counter += 1
-            if self.rocket_counter > 180:
-                self.rocket_counter = 0
                 self.rocket_active = True
                 self.rocket_delay = 0
                 self.rocket_coords = [self.WIDTH, self.HEIGHT / 2]
@@ -176,10 +173,7 @@ class Game:
                     self.y_velocity = 0
                 self.player_y += self.y_velocity
 
-            if self.distance < 50000:
-                self.game_speed = 1 + (self.distance // 500) / 10
-            else:
-                self.game_speed = 11
+            self.game_speed = (self.distance / 1500) + 1
 
             if self.laser[0][0] < 0 and self.laser[1][0] < 0:
                 self.new_laser = True
@@ -192,7 +186,6 @@ class Game:
                 self.modify_player_info()
                 self.distance = 0
                 self.rocket_active = False
-                self.rocket_counter = 0
                 self.pause = False
                 self.player_y = self.init_y
                 self.y_velocity = 0
@@ -209,25 +202,11 @@ class Game:
     def draw_player(self):
         play = pygame.rect.Rect((120, self.player_y + 10), (25, 60))
         if self.player_y < self.init_y or self.pause:
-            if self.booster:
-                pygame.draw.ellipse(self.screen, 'red', [100, self.player_y + 50, 20, 30])
-                pygame.draw.ellipse(self.screen, 'orange', [105, self.player_y + 50, 10, 30])
-                pygame.draw.ellipse(self.screen, 'yellow', [110, self.player_y + 50, 5, 30])
             pygame.draw.rect(self.screen, 'yellow', [128, self.player_y + 60, 10, 20], 0, 3)
             pygame.draw.rect(self.screen, 'orange', [130, self.player_y + 60, 10, 20], 0, 3)
         else:
-            if self.counter < 10:
-                pygame.draw.line(self.screen, 'yellow', (128, self.player_y + 60), (140, self.player_y + 80), 10)
-                pygame.draw.line(self.screen, 'orange', (130, self.player_y + 60), (120, self.player_y + 80), 10)
-            elif 10 <= self.counter < 20:
-                pygame.draw.rect(self.screen, 'yellow', [128, self.player_y + 60, 10, 20], 0, 3)
-                pygame.draw.rect(self.screen, 'orange', [130, self.player_y + 60, 10, 20], 0, 3)
-            elif 20 <= self.counter < 30:
-                pygame.draw.line(self.screen, 'yellow', (128, self.player_y + 60), (120, self.player_y + 80), 10)
-                pygame.draw.line(self.screen, 'orange', (130, self.player_y + 60), (140, self.player_y + 80), 10)
-            else:
-                pygame.draw.rect(self.screen, 'yellow', [128, self.player_y + 60, 10, 20], 0, 3)
-                pygame.draw.rect(self.screen, 'orange', [130, self.player_y + 60, 10, 20], 0, 3)
+            pygame.draw.rect(self.screen, 'yellow', [128, self.player_y + 60, 10, 20], 0, 3)
+            pygame.draw.rect(self.screen, 'orange', [130, self.player_y + 60, 10, 20], 0, 3)
         pygame.draw.rect(self.screen, 'white', [100, self.player_y + 20, 20, 30], 0, 5)
         pygame.draw.ellipse(self.screen, 'orange', [120, self.player_y + 20, 30, 50])
         pygame.draw.circle(self.screen, 'orange', (135, self.player_y + 15), 10)
