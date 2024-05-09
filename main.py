@@ -3,6 +3,7 @@ from actions import *
 from numbers import *
 from Snake_1vs1 import *
 from Boss import *
+from shoter import *
 import sys
 
 win = 0
@@ -39,45 +40,28 @@ class Game:
         self.buttons = pygame.sprite.LayeredUpdates()
         self.chests = pygame.sprite.LayeredUpdates()
         self.weapons = pygame.sprite.LayeredUpdates()
+        self.grounds = pygame.sprite.LayeredUpdates()
 
 
         self.i = 0
+        self.faded_sprites = []
 
 
     def createTilemap(self):
-        x = 0
-        k = 0
-        y = 1
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
-                if column == 'R' or column == 'b':
-                    River(self, j, i, x)
-                    x = (x + 1) % 3
-                else:
-                    Ground(self, j, i)
-                if column == 'B':
-                    Block(self, j, i)
-                elif column == 'E':
-                    Enemy(self, j, i)
-                elif column == 'P':
+                Floor(self, j, i, column)
+                if column == 'P':
                     Player(self, j, i)
+                elif column == "B":
+                    Block(self, j, i)
                 elif column == 'S':
-                    t = "S"
-                    Boss(self, j, i, k, t)
-                    k = 0
+                    Boss(self, j, i, "snake_game")
                 elif column == 's':
-                    t = 's'
-                    k = 1
-                    Boss(self, j, i, k, t)
-                elif column == 't':
-                    Tree(self, j, i, 1)
-                elif column == 'T':
-                    Tree(self, j, i, 2)
-                elif column == 'c':
-                    Chest(self, j, i, y, 0)
-                    y += 1
-                elif column == "b":
-                    Bridge(self, j, i)
+                    Boss(self, j, i, "small_game")
+                elif column == 'I':
+                    Boss(self, j, i, "shooter_game")
+
     def create_buttons(self):
         self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
         self.new_game_button = Button(self, 500, 400, self.image, 3)
@@ -92,13 +76,12 @@ class Game:
                 return sprite
         return None
 
-    def kill_boss(self, k):
-        print(k)
+    def kill_boss(self, which_game):
         for sprite in self.all_sprites:
             if isinstance(sprite, Boss):
-                if k == 1:
+                if which_game == "small_game":
                     self.victory()
-                elif sprite.k == k:
+                elif sprite.which_game == which_game:
                     sprite.kill()
 
     def new(self):
@@ -124,7 +107,7 @@ class Game:
                         self.game_state = "pause_game"
 
     def restart(self):
-        # Reset all game variables and state
+        # zmienne
         self.screen.fill(BLACK)
 
         self.camera_x = 0
@@ -133,7 +116,7 @@ class Game:
         self.dialouge = False
         self.if_pause = False
         self.i = 0
-        # Clear all sprites
+        # sprites
         self.all_sprites.empty()
         self.blocks.empty()
         self.enemies.empty()
@@ -240,10 +223,10 @@ class Game:
 
     def snake_game(self):
         self.dialouge = True
-        #"""
+        """
         self.snake_messages = ["Hej głupi głupku!", "Musisz udowdnić że władasz lepiej swoim pythonem ode mnie", "Zagrajmy. Musisz 3 razy ogłuszyć karpia. Grałeś w slither.io? Coś w tym stylu. Obyś zdechł <3" ,"Jeśli jesteś słabiutki i nie jesteś w stanie pokonać hipermaszyny stworzonej przez największe mózgi tego świata. Naciśnij x"]
-        #"""
-        #self.snake_messages = ["kys"]
+        """
+        self.snake_messages = ["kys"]
         text = Text(self, self.snake_messages)
 
         while self.dialouge:
@@ -269,6 +252,21 @@ class Game:
         self.small = BossGame(self)
         self.small.run()
         self.game_state = "main_game"
+    def shooter_game(self):
+        self.dialouge = True
+        """
+        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
+                               ,"To jest czwarta wiadomość"]
+        """
+        self.small_messages = ["kys"]
+        text = Text(self, self.small_messages)
+
+        while self.dialouge:
+            text.write()
+            pygame.display.update()
+        self.shooter = ShooterGame(self)
+        self.shooter.run()
+        self.game_state = "main_game"
 
     def main(self):
         while self.playing:
@@ -283,6 +281,9 @@ class Game:
 
                 elif self.game_state == "small_game":
                     self.small_game()
+
+                elif self.game_state == "shooter_game":
+                    self.shooter_game()
 
                 elif self.game_state == "intro_game":
                     self.intro_screen()
