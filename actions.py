@@ -25,11 +25,12 @@ class Player(pygame.sprite.Sprite):
         self._layer = PLAYER_LAYER
         self.groups = self.game.all_sprites
         pygame.sprite.Sprite.__init__(self, self.groups)
+        self.blocks_to_remove = []
 
         self.x = x * TILESIZE
         self.y = y * TILESIZE
-        self.width = TILESIZE
-        self.height = TILESIZE
+        self.width = 64
+        self.height = 64
 
         self.x_change = 0
         self.y_change = 0
@@ -37,7 +38,7 @@ class Player(pygame.sprite.Sprite):
         self.facing = 'down'
         self.animation_loop = 1
 
-        self.image = self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height)
+        self.image = self.game.character_spritesheet.get_sprite(0, 0, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -45,25 +46,25 @@ class Player(pygame.sprite.Sprite):
 
         self.hitbox = self.rect.inflate(0,-13)
 
-        self.down_animations = [self.game.character_spritesheet.get_sprite(1, 1, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(33, 1, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(65, 1, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(97, 1, self.width, self.height)]
+        self.down_animations = [self.game.character_spritesheet.get_sprite(0, 0, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(64, 0, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(128, 0, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(192, 0, self.width, self.height)]
 
-        self.up_animations = [self.game.character_spritesheet.get_sprite(1, 97, self.width, self.height),
-                              self.game.character_spritesheet.get_sprite(33, 97, self.width, self.height),
-                              self.game.character_spritesheet.get_sprite(65, 97, self.width, self.height),
-                              self.game.character_spritesheet.get_sprite(97, 97, self.width, self.height)]
+        self.up_animations = [self.game.character_spritesheet.get_sprite(0, 192, self.width, self.height),
+                              self.game.character_spritesheet.get_sprite(64, 192, self.width, self.height),
+                              self.game.character_spritesheet.get_sprite(128, 192, self.width, self.height),
+                              self.game.character_spritesheet.get_sprite(192, 192, self.width, self.height)]
 
-        self.left_animations = [self.game.character_spritesheet.get_sprite(1, 33, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(33, 33, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(65, 33, self.width, self.height),
-                                self.game.character_spritesheet.get_sprite(97, 33, self.width, self.height)]
+        self.left_animations = [self.game.character_spritesheet.get_sprite(0, 64, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(64, 64, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(128, 64, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(192, 64, self.width, self.height)]
 
-        self.right_animations = [self.game.character_spritesheet.get_sprite(1, 65, self.width, self.height),
-                                 self.game.character_spritesheet.get_sprite(33, 65, self.width, self.height),
-                                 self.game.character_spritesheet.get_sprite(65, 65, self.width, self.height),
-                                 self.game.character_spritesheet.get_sprite(97, 65, self.width, self.height)]
+        self.right_animations = [self.game.character_spritesheet.get_sprite(0, 128, self.width, self.height),
+                                 self.game.character_spritesheet.get_sprite(64, 128, self.width, self.height),
+                                 self.game.character_spritesheet.get_sprite(128, 128, self.width, self.height),
+                                 self.game.character_spritesheet.get_sprite(192, 128, self.width, self.height)]
 
     def update(self):
 
@@ -138,25 +139,12 @@ class Player(pygame.sprite.Sprite):
             self.game.playing = False
 
     def collide_obstacles(self, direction):
-        for river in self.game.rivers:
-            for bridge in self.game.bridges:
-                if bridge.hitbox.colliderect(self.rect):
-                    pass
-                elif river.rect.colliderect(self.rect):
-                    if direction == 'x':
-                        if self.x_change > 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
-                            self.rect.right = river.rect.left
-                        elif self.x_change < 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
-                            self.rect.left = river.rect.right
-                    if direction == 'y':
-                            if self.y_change < 0 and self.rect.top <= river.rect.bottom - 20:
-                                self.rect.top = river.rect.bottom - 20
-                            elif self.y_change > 0 and (self.rect.top > river.rect.bottom + 20 or self.rect.top < river.rect.top):
-                                self.rect.bottom = river.rect.top
 
         for block in self.game.blocks:
             if block.rect.colliderect(self.rect):
                 if self.rect.bottom < block.rect.bottom:
+                    block.image.set_alpha(128)
+                    self.game.faded_sprites.append(block)
                     if self.game.all_sprites.get_layer_of_sprite(self) > self.game.all_sprites.get_layer_of_sprite(
                             block):
                         self.game.all_sprites.switch_layer(BLOCK_LAYER, PLAYER_LAYER)
@@ -171,11 +159,26 @@ class Player(pygame.sprite.Sprite):
                             self.rect.right = block.hitbox.left
                         if self.x_change < 0:
                             self.rect.left = block.hitbox.right
-                    if direction == 'y':
+                    elif direction == 'y':
                         if self.y_change > 0:
                             self.rect.bottom = block.hitbox.top
                         if self.y_change < 0:
                             self.rect.top = block.hitbox.bottom
+
+        for block in self.game.faded_sprites:
+            if not block.rect.colliderect(self.rect):
+                block.image.set_alpha(255)
+                self.blocks_to_remove.append(block)
+
+        for block in self.blocks_to_remove:
+            if block in self.game.faded_sprites:
+                self.game.faded_sprites.remove(block)
+        self.blocks_to_remove.clear()
+
+
+
+
+
 
 
     def collide_boss_area(self, direction):
@@ -184,36 +187,44 @@ class Player(pygame.sprite.Sprite):
         for boss in hits:
             if direction == 'x':
                 if self.x_change > 0:
-                    if boss.k == 0:
+                    if boss.which_game == "snake_game":
                         self.game.game_state = "snake_game"
-                    elif boss.k == 1:
+                    elif boss.which_game == "small_game":
                         self.game.game_state = "small_game"
+                    elif boss.which_game == "shooter_game":
+                        self.game.game_state = "shooter_game"
                     self.rect.right = boss.rect.left - TILESIZE
                 if self.x_change < 0:
-                    if boss.k == 0:
+                    if boss.which_game == "snake_game":
                         self.game.game_state = "snake_game"
-                    elif boss.k == 1:
+                    elif boss.which_game == "small_game":
                         self.game.game_state = "small_game"
+                    elif boss.which_game == "shooter_game":
+                        self.game.game_state = "shooter_game"
                     self.rect.left = boss.rect.right + TILESIZE
             if direction == 'y':
                 if self.y_change > 0:
-                    if boss.k == 0:
+                    if boss.which_game == "snake_game":
                         self.game.game_state = "snake_game"
-                    elif boss.k == 1:
+                    elif boss.which_game == "small_game":
                         self.game.game_state = "small_game"
+                    elif boss.which_game == "shooter_game":
+                        self.game.game_state = "shooter_game"
                     self.rect.bottom = boss.rect.top - TILESIZE
                 if self.y_change < 0:
-                    if boss.k == 0:
+                    if boss.which_game == "snake_game":
                         self.game.game_state = "snake_game"
-                    elif boss.k == 1:
+                    elif boss.which_game == "small_game":
                         self.game.game_state = "small_game"
+                    elif boss.which_game == "shooter_game":
+                        self.game.game_state = "shooter_game"
                     self.rect.top = boss.rect.bottom + TILESIZE
 
     def animate(self):
 
         if self.facing == 'down':
             if self.y_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(0, 1, self.width, self.height)
+                self.image = self.down_animations[0]
             else:
                 self.image = self.down_animations[math.floor(self.animation_loop)]
                 self.animation_loop += 0.1
@@ -222,7 +233,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.facing == 'up':
             if self.y_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(1, 97, self.width, self.height)
+                self.image = self.up_animations[0]
             else:
                 self.image = self.up_animations[math.floor(self.animation_loop)]
                 self.animation_loop += 0.1
@@ -231,7 +242,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.facing == 'left':
             if self.x_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(1, 33, self.width, self.height)
+                self.image = self.left_animations[0]
             else:
                 self.image = self.left_animations[math.floor(self.animation_loop)]
                 self.animation_loop += 0.1
@@ -240,7 +251,7 @@ class Player(pygame.sprite.Sprite):
 
         if self.facing == 'right':
             if self.x_change == 0:
-                self.image = self.game.character_spritesheet.get_sprite(3, 65, self.width, self.height)
+                self.image = self.right_animations[0]
             else:
                 self.image = self.right_animations[math.floor(self.animation_loop)]
                 self.animation_loop += 0.1
@@ -378,15 +389,15 @@ class Block(pygame.sprite.Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.width = TILESIZE
-        self.height = TILESIZE
+        self.height = 80
 
-        self.image = self.game.terrain_spritesheet.get_sprite(992, 544, self.width, self.height)
+        self.image = self.game.terrain_spritesheet.get_sprite(416, 656, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.hitbox = self.rect.inflate(0,-30)
+        self.hitbox = self.rect.inflate(0,-75)
 
 
 class River(pygame.sprite.Sprite):
@@ -547,22 +558,26 @@ class Attack(pygame.sprite.Sprite):
 
 
 class Boss(pygame.sprite.Sprite):
-    def __init__(self, game, x, y, k, t):
+    def __init__(self, game, x, y, which_game, score):
         self.game = game
         self._layer = BOSS_LAYER
         self.groups = self.game.all_sprites, self.game.bosses
         pygame.sprite.Sprite.__init__(self, self.groups)
-        self.k = k
+
+        self.which_game = which_game
+        self.score = score
 
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.width = TILESIZE
         self.height = TILESIZE
 
-        if t == 'S':
-            self.image = self.game.terrain_spritesheet.get_sprite(512, 576, self.width, self.height)
-        elif t == 's':
-            self.image = self.game.terrain_spritesheet.get_sprite(192, 736, self.width, self.height)
+        if which_game == 'snake_game':
+            self.image = self.game.terrain_spritesheet.get_sprite(560, 704, self.width, self.height * 1.5)
+        elif which_game == 'small_game':
+            self.image = self.game.terrain_spritesheet.get_sprite(624, 704, self.width, self.height * 1.5)
+        elif which_game == "shooter_game":
+            self.image = self.game.terrain_spritesheet.get_sprite(688, 704, self.width, self.height * 1.5)
     
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -729,5 +744,22 @@ class Weapon(pygame.sprite.Sprite):
         
         ))
         """
-    def animate(self):
-        pass
+class Floor(pygame.sprite.Sprite):
+    def __init__(self, game, x, y, type):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.grounds
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.terrain_spritesheet.get_sprite(352, 672, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+
