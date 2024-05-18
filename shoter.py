@@ -1,8 +1,11 @@
 import pygame, sys
 from random import choice, randint
+import os
 
-screen_height = 750
-screen_width = 1500
+os.environ['SDL_VIDEO_CENTERED'] = '1'
+
+screen_height = 795
+screen_width = 1540
 screen = pygame.display.set_mode((screen_width, screen_height))
 
 ALIENLASER = pygame.USEREVENT + 1
