@@ -2,9 +2,7 @@ import pygame as pg
 import time
 import random
 from numbers import *
-import os
 
-os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 class SnakeGame:
     def __init__(self, main):
@@ -23,13 +21,17 @@ class SnakeGame:
         self.bot = Bot(self)
         self.printer = Printer(self)
 
-        self.fruit_position = [random.randrange(0, (WIN_WIDTH // self.pixel)) * self.pixel,
-                               random.randrange(0, (WIN_HEIGHT // self.pixel)) * self.pixel]
-        self.fruit_on_map = False
+        self.fruit_position = [
+            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_WIDTH - SNAKE_BORDER) // self.pixel)) * self.pixel,
+            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_HEIGHT - SNAKE_BORDER) // self.pixel)) * self.pixel]
+        self.fruit_on_map = True
+
+        self.all_entity = [Sprites(0, 0, WIN_WIDTH, WIN_HEIGHT, 'img/snake_background.png')]
 
     def fruit(self):
-        self.fruit_position = [random.randrange(0, (WIN_WIDTH // self.pixel)) * self.pixel,
-                               random.randrange(0, (WIN_HEIGHT // self.pixel)) * self.pixel]
+        self.fruit_position = [
+            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_WIDTH - SNAKE_BORDER) // self.pixel)) * self.pixel,
+            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_HEIGHT - SNAKE_BORDER) // self.pixel)) * self.pixel]
         self.fruit_on_map = True
 
     def handle_events(self):
@@ -77,10 +79,10 @@ class SnakeGame:
 
     def run(self):
         while self.game_state == "snake_game":
+            self.handle_events()
             self.snake.move()
             if not self.fruit_on_map:
                 self.fruit()
-            self.handle_events()
             self.bot.brain()
             self.bot.move()
             self.printer.update_map()
@@ -95,8 +97,11 @@ class SnakeGame:
 class Snake:
     def __init__(self, game):
         self.game = game
-        self.snake_position = [4 * self.game.pixel, 350]
-        self.snake_body = [[4 * self.game.pixel, 350],
+        self.snake_position = [7 * self.game.pixel, 350]
+        self.snake_body = [[7 * self.game.pixel, 350],
+                           [6 * self.game.pixel, 350],
+                           [5 * self.game.pixel, 350],
+                           [4 * self.game.pixel, 350],
                            [3 * self.game.pixel, 350],
                            [2 * self.game.pixel, 350],
                            [self.game.pixel, 350]]
@@ -130,41 +135,45 @@ class Snake:
         else:
             self.snake_body.pop()
 
-        if self.snake_position[0] < 0 or self.snake_position[0] > WIN_WIDTH - self.game.pixel:
-            self.game.crash = 1
+        if self.snake_position[0] < SNAKE_BORDER or self.snake_position[0] > WIN_WIDTH - self.game.pixel - SNAKE_BORDER:
+            self.game.game_over()
 
-        if self.snake_position[1] < 0 or self.snake_position[1] > WIN_HEIGHT - self.game.pixel:
-            self.game.crash = 1
+        if self.snake_position[1] < SNAKE_BORDER or self.snake_position[
+            1] > WIN_HEIGHT - self.game.pixel - SNAKE_BORDER:
+            self.game.game_over()
 
         for block in self.snake_body[1:]:
             if self.snake_position[0] == block[0] and self.snake_position[1] == block[1]:
                 self.game.crash = 1
 
 
-class Bot(Snake):
+class Bot:
     def __init__(self, game):
-        super().__init__(game)
+        self.game = game
         self.bot_position = [50 * self.game.pixel, 350]
         self.bot_body = [[50 * self.game.pixel, 350],
                          [51 * self.game.pixel, 350],
                          [52 * self.game.pixel, 350],
-                         [53 * self.game.pixel, 350]]
+                         [53 * self.game.pixel, 350],
+                         [54 * self.game.pixel, 350],
+                         [55 * self.game.pixel, 350],
+                         [56 * self.game.pixel, 350]]
         self.bot_direction = 'LEFT'
         self.bot_change_to = 'LEFT'
 
     def count_around_me(self, x, y, d):
         wall = ''
         if (self.game.snake.snake_body.count([x, y - self.game.pixel]) == 1 or self.bot_body.count(
-                [x, y - self.game.pixel]) == 1 or y - self.game.pixel < 0) and d != 'D':
+                [x, y - self.game.pixel]) == 1 or y - self.game.pixel < SNAKE_BORDER) and d != 'D':
             wall += 'U'
         if (self.game.snake.snake_body.count([x, y + self.game.pixel]) == 1 or self.bot_body.count(
-                [x, y + self.game.pixel]) == 1 or y + self.game.pixel == WIN_HEIGHT) and d != 'U':
+                [x, y + self.game.pixel]) == 1 or y + self.game.pixel == WIN_HEIGHT - SNAKE_BORDER - 5) and d != 'U':
             wall += 'D'
         if (self.game.snake.snake_body.count([x - self.game.pixel, y]) == 1 or self.bot_body.count(
-                [x - self.game.pixel, y]) == 1 or x - self.game.pixel < 0) and d != 'R':
+                [x - self.game.pixel, y]) == 1 or x - self.game.pixel < SNAKE_BORDER) and d != 'R':
             wall += 'L'
         if (self.game.snake.snake_body.count([x + self.game.pixel, y]) == 1 or self.bot_body.count(
-                [x + self.game.pixel, y]) == 1 or x + self.game.pixel == WIN_WIDTH) and d != 'L':
+                [x + self.game.pixel, y]) == 1 or x + self.game.pixel == WIN_WIDTH - SNAKE_BORDER - 11) and d != 'L':
             wall += 'R'
         return wall
 
@@ -253,12 +262,43 @@ class Bot(Snake):
                 self.game.crash = 1
 
 
+class Sprites:
+    def __init__(self, x, y, width, height, img, img_x=1, img_y=1):
+        self.x = x
+        self.y = y
+        self.size = [width, height]
+        self.rect = (self.x, self.y, self.size[0], self.size[1])
+        self.coli_rect = pg.Rect(self.x, self.y, self.size[0], self.size[1])
+        self.sheet = pg.image.load(img)
+        if img_x == img_y == 1:
+            self.sheet = pg.transform.scale(self.sheet, (self.size[0], self.size[1]))
+        self.img_x = img_x
+        self.img_y = img_y
+        self.animate = 0
+
+    def get_sheet(self, x, y):
+        sprite = pg.Surface([self.size[0], self.size[1]])
+        sprite.blit(self.sheet, (0, 0), (x * self.size[0], y * self.size[1], self.size[0], self.size[1]))
+        sprite.set_colorkey(BLACK)
+        return sprite
+
+
 class Printer:
     def __init__(self, game):
         self.game = game
 
     def update_map(self):
-        self.game.screen.fill((0, 0, 0))
+        for sprite in self.game.all_entity:
+            self.game.screen.blit(sprite.get_sheet(0, 0), (sprite.x, sprite.y))
+
+        for x in range(0, (WIN_WIDTH - 2 * SNAKE_BORDER - 11) // self.game.pixel):
+            for y in range(0, (WIN_HEIGHT - 2 * SNAKE_BORDER - 5) // self.game.pixel):
+                pg.draw.rect(self.game.screen, (60, 60, 60),
+                             pg.Rect(SNAKE_BORDER + x * self.game.pixel, SNAKE_BORDER + y * self.game.pixel,
+                                     self.game.pixel, self.game.pixel))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(SNAKE_BORDER + x * self.game.pixel + 1, SNAKE_BORDER + y * self.game.pixel + 1,
+                                     self.game.pixel - 2, self.game.pixel - 2))
 
         pg.draw.rect(self.game.screen, (255, 255, 0),
                      pg.Rect(self.game.fruit_position[0], self.game.fruit_position[1], self.game.pixel,
@@ -267,6 +307,44 @@ class Printer:
         pg.draw.rect(self.game.screen, (0, 255, 0),
                      pg.Rect(self.game.snake.snake_body[0][0], self.game.snake.snake_body[0][1],
                              self.game.pixel, self.game.pixel))
+
+        if self.game.snake.direction == "UP":
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 5, self.game.snake.snake_body[0][1] + 5, 5, 5))
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 15, self.game.snake.snake_body[0][1] + 5, 5, 5))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 6, self.game.snake.snake_body[0][1] + 5, 3, 3))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 16, self.game.snake.snake_body[0][1] + 5, 3, 3))
+        elif self.game.snake.direction == "DOWN":
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 5, self.game.snake.snake_body[0][1] + 15, 5, 5))
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 15, self.game.snake.snake_body[0][1] + 15, 5, 5))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 6, self.game.snake.snake_body[0][1] + 17, 3, 3))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 16, self.game.snake.snake_body[0][1] + 17, 3, 3))
+        elif self.game.snake.direction == "LEFT":
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 5, self.game.snake.snake_body[0][1] + 5, 5, 5))
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 5, self.game.snake.snake_body[0][1] + 15, 5, 5))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 5, self.game.snake.snake_body[0][1] + 6, 3, 3))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 5, self.game.snake.snake_body[0][1] + 16, 3, 3))
+        elif self.game.snake.direction == "RIGHT":
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 15, self.game.snake.snake_body[0][1] + 5, 5, 5))
+            pg.draw.rect(self.game.screen, (255, 255, 255),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 15, self.game.snake.snake_body[0][1] + 15, 5, 5))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 17, self.game.snake.snake_body[0][1] + 6, 3, 3))
+            pg.draw.rect(self.game.screen, (0, 0, 0),
+                         pg.Rect(self.game.snake.snake_body[0][0] + 17, self.game.snake.snake_body[0][1] + 16, 3, 3))
+
         color = 255
         for pos in self.game.snake.snake_body[1:]:
             color -= 200 // len(self.game.snake.snake_body)
@@ -276,6 +354,48 @@ class Printer:
             pg.draw.rect(self.game.screen, (255, 0, 255),
                          pg.Rect(self.game.bot.bot_body[0][0], self.game.bot.bot_body[0][1],
                                  self.game.pixel, self.game.pixel))
+
+            if self.game.bot.bot_direction == "U":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 6, self.game.bot.bot_body[0][1] + 5, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 16, self.game.bot.bot_body[0][1] + 5, 3, 3))
+            elif self.game.bot.bot_direction == "D":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 15, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 15, 5,
+                                     5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 6, self.game.bot.bot_body[0][1] + 17, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 16, self.game.bot.bot_body[0][1] + 17, 3,
+                                     3))
+            elif self.game.bot.bot_direction == "L":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 15, 5, 5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 6, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 16, 3, 3))
+            elif self.game.bot.bot_direction == "R":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 15, 5,
+                                     5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 17, self.game.bot.bot_body[0][1] + 6, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 17, self.game.bot.bot_body[0][1] + 16, 3,
+                                     3))
+
             color = 255
             for pos in self.game.bot.bot_body[1:]:
                 color -= 200 // len(self.game.bot.bot_body)
@@ -285,6 +405,48 @@ class Printer:
             pg.draw.rect(self.game.screen, (255, 0, 0),
                          pg.Rect(self.game.bot.bot_body[0][0], self.game.bot.bot_body[0][1],
                                  self.game.pixel, self.game.pixel))
+
+            if self.game.bot.bot_direction == "U":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 6, self.game.bot.bot_body[0][1] + 5, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 16, self.game.bot.bot_body[0][1] + 5, 3, 3))
+            elif self.game.bot.bot_direction == "D":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 15, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 15, 5,
+                                     5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 6, self.game.bot.bot_body[0][1] + 17, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 16, self.game.bot.bot_body[0][1] + 17, 3,
+                                     3))
+            elif self.game.bot.bot_direction == "L":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 15, 5, 5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 6, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 5, self.game.bot.bot_body[0][1] + 16, 3, 3))
+            elif self.game.bot.bot_direction == "R":
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 5, 5, 5))
+                pg.draw.rect(self.game.screen, (255, 255, 255),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 15, self.game.bot.bot_body[0][1] + 15, 5,
+                                     5))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 17, self.game.bot.bot_body[0][1] + 6, 3, 3))
+                pg.draw.rect(self.game.screen, (0, 0, 0),
+                             pg.Rect(self.game.bot.bot_body[0][0] + 17, self.game.bot.bot_body[0][1] + 16, 3,
+                                     3))
+
             color = 255
             for pos in self.game.bot.bot_body[1:]:
                 color -= 200 // len(self.game.bot.bot_body)
