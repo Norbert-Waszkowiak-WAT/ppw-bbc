@@ -164,6 +164,20 @@ class Player(pygame.sprite.Sprite):
                             self.rect.bottom = block.hitbox.top
                         if self.y_change < 0:
                             self.rect.top = block.hitbox.bottom
+        for door in self.game.doors:
+            if door.rect.colliderect(self.rect):
+
+                if door.hitbox.colliderect(self.rect):
+                    if direction == 'x':
+                        if self.x_change > 0:
+                            self.rect.right = door.hitbox.left
+                        if self.x_change < 0:
+                            self.rect.left = door.hitbox.right
+                    elif direction == 'y':
+                        if self.y_change > 0:
+                            self.rect.bottom = door.hitbox.top
+                        if self.y_change < 0:
+                            self.rect.top = door.hitbox.bottom
 
         for block in self.game.faded_sprites:
             if not block.rect.colliderect(self.rect):
@@ -389,7 +403,7 @@ class Block(pygame.sprite.Sprite):
         self.x = x * TILESIZE
         self.y = y * TILESIZE
         self.width = TILESIZE
-        self.height = 80
+        self.height = TILESIZE
 
         self.image = self.game.terrain_spritesheet.get_sprite(416, 656, self.width, self.height)
 
@@ -397,7 +411,7 @@ class Block(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.hitbox = self.rect.inflate(0,-75)
+        self.hitbox = self.rect.inflate(0,-45)
 
 
 class River(pygame.sprite.Sprite):
@@ -620,7 +634,27 @@ class Text:
             self.snip = self.font.render(self.message[0:self.counter // self.speed], True, 'white')
         self.game.screen.blit(self.snip, (10, WIN_HEIGHT - TEXT_HEIGHT))
 
+class Door(pygame.sprite.Sprite):
 
+    def __init__(self, game, x, y, health):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites, self.game.doors
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE * 2
+        self.height = TILESIZE
+
+        self.image = self.game.terrain_spritesheet.get_sprite(128, 768, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.health = health
+        self.hitbox = self.rect.inflate(0,-45)
 class Button(pygame.sprite.Sprite):
     def __init__(self,game, x, y, image, scale):
         width = image.get_width()
