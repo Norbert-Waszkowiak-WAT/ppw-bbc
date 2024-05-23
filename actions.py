@@ -405,13 +405,13 @@ class Block(pygame.sprite.Sprite):
         self.width = TILESIZE
         self.height = TILESIZE
 
-        self.image = self.game.terrain_spritesheet.get_sprite(416, 656, self.width, self.height)
+        self.image = self.game.terrain_spritesheet.get_sprite(416, 672, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
 
-        self.hitbox = self.rect.inflate(0,-45)
+        self.hitbox = self.rect.inflate(0, -45)
 
 
 class River(pygame.sprite.Sprite):
