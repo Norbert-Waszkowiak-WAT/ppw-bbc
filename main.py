@@ -5,7 +5,9 @@ from Snake_1vs1 import *
 from Boss import *
 from shoter import *
 import sys
+import os
 
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 win = 0
 class Game:
     def __init__(self):
@@ -31,6 +33,7 @@ class Game:
 
         self.all_sprites = pygame.sprite.LayeredUpdates()
         self.blocks = pygame.sprite.LayeredUpdates()
+        self.doors = pygame.sprite.LayeredUpdates()
         self.rivers = pygame.sprite.LayeredUpdates()
         self.bridges = pygame.sprite.LayeredUpdates()
         self.enemies = pygame.sprite.LayeredUpdates()
@@ -45,6 +48,7 @@ class Game:
 
         self.i = 0
         self.faded_sprites = []
+        self.score = 0
 
 
     def createTilemap(self):
@@ -55,20 +59,24 @@ class Game:
                     Player(self, j, i)
                 elif column == "B":
                     Block(self, j, i)
+                elif column == "D":
+                    Door(self, j, i, 200)
+                elif column == "d":
+                    Door(self, j, i, 500)
                 elif column == 'S':
-                    Boss(self, j, i, "snake_game")
+                    Boss(self, j, i, "snake_game", 200)
                 elif column == 's':
-                    Boss(self, j, i, "small_game")
+                    Boss(self, j, i, "small_game", 0)
                 elif column == 'I':
-                    Boss(self, j, i, "shooter_game")
+                    Boss(self, j, i, "shooter_game", 100)
 
     def create_buttons(self):
-        self.image = self.buttons_spritesheet.get_sprite(0, 64, 6 * TILESIZE, 2 * TILESIZE)
+        self.image = self.buttons_spritesheet.get_sprite(0, 64, 3 * TILESIZE, TILESIZE)
         self.new_game_button = Button(self, 500, 400, self.image, 3)
-        self.image = self.buttons_spritesheet.get_sprite(0, 128, 6 * TILESIZE, 2 * TILESIZE)
-        self.exit_button = Button(self, 500, 550, self.image, 3)
-        self.image = self.buttons_spritesheet.get_sprite(0, 0, 6 * TILESIZE, 2 * TILESIZE)
-        self.continue_button = Button(self, 500, 250, self.image, 3)
+        self.image = self.buttons_spritesheet.get_sprite(0, 128, 3 * TILESIZE, TILESIZE)
+        self.exit_button = Button(self, 500, 600, self.image, 3)
+        self.image = self.buttons_spritesheet.get_sprite(0, 0, 3 * TILESIZE, TILESIZE)
+        self.continue_button = Button(self, 500, 200, self.image, 3)
     def get_player(self):
 
         for sprite in self.all_sprites:
@@ -76,13 +84,20 @@ class Game:
                 return sprite
         return None
 
-    def kill_boss(self, which_game):
+    def end_boss(self, which_game):
         for sprite in self.all_sprites:
             if isinstance(sprite, Boss):
+                if sprite.which_game == which_game :
+                    self.score += sprite.score
                 if which_game == "small_game":
                     self.victory()
-                elif sprite.which_game == which_game:
-                    sprite.kill()
+        for door in self.doors:
+            if door.health <= self.score:
+                door.kill()
+
+
+
+
 
     def new(self):
 
@@ -115,6 +130,7 @@ class Game:
         self.game_state = "main_game"
         self.dialouge = False
         self.if_pause = False
+        self.score = 0
         self.i = 0
         # sprites
         self.all_sprites.empty()
@@ -126,6 +142,8 @@ class Game:
         self.buttons.empty()
         self.chests.empty()
         self.weapons.empty()
+        self.doors.empty()
+
 
         self.new_game_button.kill()
         self.exit_button.kill()
@@ -135,7 +153,6 @@ class Game:
 
 
     def update(self):
-
         self.all_sprites.update()
 
         self.new_game_button.kill()
@@ -180,6 +197,9 @@ class Game:
                     self.screen.blit(sprite.image, (sprite_on_screen_x, sprite_on_screen_y))
                 elif self.i != 0:
                     self.screen.blit(sprite.scaled_image, (sprite_on_screen_x, sprite_on_screen_y))
+        font = pygame.font.SysFont(None, 55)
+        score_text = font.render("Punkty: " + str(self.score), True, RED)
+        screen.blit(score_text, (1300, 10))
 
 
 

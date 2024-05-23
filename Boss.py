@@ -4,6 +4,9 @@ import time
 from math import hypot, degrees, atan2, cos, sin
 import random
 from numbers import *
+import os
+
+os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 
 class BossGame:
@@ -20,8 +23,7 @@ class BossGame:
         self.fps = pg.time.Clock()
         self.cooldown = 0
         self.all_entity = [Sprites('boss', self.boss.x, self.boss.y, 128, 128, 'img/Boss.png', 2, 2),
-                           Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8),
-                           Sprites('background', 0, 0, 1536, 780, 'img/Boss_Background.png')]
+                           Sprites('player', 725, 300, 32, 64, 'img/Boss_character.png', 4, 8)]
 
     def game_over(self):
         game_over_font = pg.font.Font(None, 36)
@@ -35,6 +37,7 @@ class BossGame:
         self.game_state = "main_game"
 
     def victory(self):
+        pg.mixer.stop()
         game_over_font = pg.font.Font(None, 36)
         game_over_text = game_over_font.render("Victory", True, (0, 255, 0))
         game_over_rect = game_over_text.get_rect()
@@ -44,14 +47,16 @@ class BossGame:
         pg.display.flip()
         pg.time.wait(1000)
         self.game_state = "main_game"
-        self.main.kill_boss(1)
+        self.main.end_boss("small_game")
         #self.main.playing = False
 
+
     def draw(self):
-        self.window.blit(self.all_entity[2].get_sheet(0, 0), (self.all_entity[2].x, self.all_entity[2].y))
+        self.window.fill((50, 50, 50))
+        pg.draw.rect(self.window, (100, 100, 100), (BORDER, BORDER, WIN_WIDTH - BORDER * 2, WIN_HEIGHT - BORDER * 2))
 
         health_rect = pg.draw.rect(self.window, (255, 0, 0),
-                                   (WIN_WIDTH / 2 - 250, 0, self.boss.health / 2, 20))
+                                   (WIN_WIDTH / 2 - 250, WIN_HEIGHT - 20, self.boss.health / 2, 20))
         self.window.blit(pg.font.Font(None, 36).render("Boss Health", True, (255, 255, 255)), health_rect)
         health_cylc = pg.draw.circle(self.window, (255, 0, 0),
                                      (10, 10), 35)
