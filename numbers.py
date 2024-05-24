@@ -82,7 +82,7 @@ tilemap = [
     'BwwwwwwwwwwwwwwwwwwwwwB',
     'BwwwwwwwBwwwPwwwwBwwwwB',
     'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
+    'BwwwwwwwwwwwwwwwJwwwwwB',
     'BwwwwwwwwwwwwwwwwwwwwwB',
     'BBBBBBBBBBBBBBBBBBBBBBB',
 ]

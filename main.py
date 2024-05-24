@@ -4,6 +4,7 @@ from numbers import *
 from Snake_1vs1 import *
 from Boss import *
 from shoter import *
+from jetpack import *
 import sys
 import os
 
@@ -65,6 +66,8 @@ class Game:
                     Door(self, j, i, 500)
                 elif column == 'S':
                     Boss(self, j, i, "snake_game", 200)
+                elif column == 'J':
+                    Boss(self, j, i, "jetpack_game", 100)
                 elif column == 's':
                     Boss(self, j, i, "small_game", 0)
                 elif column == 'I':
@@ -287,6 +290,21 @@ class Game:
         self.shooter = ShooterGame(self)
         self.shooter.run()
         self.game_state = "main_game"
+    def jetpack_game(self):
+        self.dialouge = True
+        """
+        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
+                               ,"To jest czwarta wiadomość"]
+        """
+        self.small_messages = ["kys"]
+        text = Text(self, self.small_messages)
+
+        while self.dialouge:
+            text.write()
+            pygame.display.update()
+        self.jetpack = JetpackGame(self)
+        self.jetpack.run()
+        self.game_state = "main_game"
 
     def main(self):
         while self.playing:
@@ -304,6 +322,9 @@ class Game:
 
                 elif self.game_state == "shooter_game":
                     self.shooter_game()
+
+                elif self.game_state == "jetpack_game":
+                    self.jetpack_game()
 
                 elif self.game_state == "intro_game":
                     self.intro_screen()

@@ -207,6 +207,8 @@ class Player(pygame.sprite.Sprite):
                         self.game.game_state = "small_game"
                     elif boss.which_game == "shooter_game":
                         self.game.game_state = "shooter_game"
+                    elif boss.which_game == "jetpack_game":
+                        self.game.game_state = "jetpack_game"
                     self.rect.right = boss.rect.left - TILESIZE
                 if self.x_change < 0:
                     if boss.which_game == "snake_game":
@@ -591,6 +593,8 @@ class Boss(pygame.sprite.Sprite):
         elif which_game == 'small_game':
             self.image = self.game.terrain_spritesheet.get_sprite(624, 704, self.width, self.height * 1.5)
         elif which_game == "shooter_game":
+            self.image = self.game.terrain_spritesheet.get_sprite(496, 704, self.width, self.height * 1.5)
+        elif which_game == "jetpack_game":
             self.image = self.game.terrain_spritesheet.get_sprite(688, 704, self.width, self.height * 1.5)
     
         self.rect = self.image.get_rect()

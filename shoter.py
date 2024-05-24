@@ -1,12 +1,13 @@
 import pygame, sys
 from random import choice, randint
 import os
+from numbers import *
 
 os.environ['SDL_VIDEO_CENTERED'] = '1'
 
 screen_height = 795
 screen_width = 1540
-screen = pygame.display.set_mode((screen_width, screen_height))
+screen = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
 
 ALIENLASER = pygame.USEREVENT + 1
 pygame.time.set_timer(ALIENLASER, 200)
@@ -22,14 +23,14 @@ class ShooterGame:
     def __init__(self, main):
         self.main = main
         self.time = 0
-        self.window_width = 1500
-        self.window_height = 750
+        self.window_width = 1540
+        self.window_height = 795
         self.game_state = "shooter_game"
         pygame.init()
         self.window = pygame.display.set_mode((self.window_width, self.window_height), pygame.RESIZABLE)
         self.fps = pygame.time.Clock()
         # Player setup
-        player_sprite = Shooter((screen_width / 2, screen_height), screen_width, 5)
+        player_sprite = Shooter((screen_width / 2, 785), screen_width, 5)
         self.player = pygame.sprite.GroupSingle(player_sprite)
 
         # health and score setup
@@ -78,6 +79,7 @@ class ShooterGame:
 
 
     def victory(self):
+        pygame.mixer.stop()
         game_over_font = pygame.font.Font(None, 36)
         game_over_text = game_over_font.render("Victory", True, (0, 255, 0))
         game_over_rect = game_over_text.get_rect()
@@ -87,7 +89,7 @@ class ShooterGame:
         pygame.display.flip()
         pygame.time.wait(1000)
         self.game_state = "main_game"
-        self.main.kill_boss("shooter_game")
+        self.main.end_boss("shooter_game")
 
     def run(self):
         while self.game_state == "shooter_game":
