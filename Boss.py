@@ -46,23 +46,35 @@ class BossGame:
         pg.time.wait(1000)
         self.game_state = "main_game"
         self.main.end_boss("small_game")
-        #self.main.playing = False
+        # self.main.playing = False
 
     def draw(self):
+        def render_text(window, text, font_size, color, pos):
+            font = pg.font.Font(None, font_size)
+            text_surface = font.render(text, True, color)
+            window.blit(text_surface, pos)
+
         self.window.blit(self.all_entity[2].get_sheet(0, 0), (self.all_entity[2].x, self.all_entity[2].y))
 
+        # Draw health bar
         health_rect = pg.draw.rect(self.window, (255, 0, 0),
                                    (WIN_WIDTH / 2 - 250, 0, self.boss.health / 2, 20))
-        self.window.blit(pg.font.Font(None, 36).render("Boss Health", True, (255, 255, 255)), health_rect)
-        health_cylc = pg.draw.circle(self.window, (255, 0, 0),
-                                     (10, 10), 35)
-        self.window.blit(pg.font.Font(None, 36).render(str(self.player.health), True, (255, 255, 255)), health_cylc)
-        energy_cylc = pg.draw.circle(self.window, (255, 255, 0),
-                                     (WIN_WIDTH - 10, 10), 35)
-        self.window.blit(pg.font.Font(None, 36).render(str(int(self.player.energy)), True, (0, 0, 0)), energy_cylc)
+        render_text(self.window, "Boss Health", 36, (255, 255, 255), (health_rect.x, health_rect.y))
+
+        # Draw player health circle
+        health_circle_pos = (10, 10)
+        pg.draw.circle(self.window, (255, 0, 0), health_circle_pos, 35)
+        render_text(self.window, str(self.player.health), 36, (255, 255, 255),
+                    (health_circle_pos[0] - 10, health_circle_pos[1] - 5))
+
+        # Draw player energy circle
+        energy_circle_pos = (WIN_WIDTH - 10, 10)
+        pg.draw.circle(self.window, (255, 255, 0), energy_circle_pos, 35)
+        render_text(self.window, str(int(self.player.energy)), 36, (0, 0, 0),
+                    (energy_circle_pos[0] - 30, energy_circle_pos[1] - 5))
 
         for sprite in self.all_entity:
-            if sprite.name == 'attack' or sprite.name == 'particle':
+            if sprite.name in ['attack', 'particle']:
                 s = pg.transform.rotate(sprite.get_sheet(random.randint(0, sprite.img_x - 1),
                                                          random.randint(0, sprite.img_y - 1)), random.randint(0, 360))
                 self.window.blit(s, (sprite.x, sprite.y))
@@ -72,53 +84,25 @@ class BossGame:
                 self.window.blit(s, (sprite.x, sprite.y))
                 sprite.animate += 15
             elif sprite.name == 'skeleton':
-                self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                  sprite.rand), (sprite.x, sprite.y))
-                if sprite.animate <= sprite.img_x - 1:
-                    sprite.animate += 0.1
-                else:
-                    sprite.animate = 0
+                self.window.blit(sprite.get_sheet(int(sprite.animate), sprite.rand), (sprite.x, sprite.y))
+                sprite.animate = (sprite.animate + 0.1) % sprite.img_x
+                if sprite.health is not None:
+                    pg.draw.rect(self.window, (255, 0, 0), (sprite.x, sprite.y - 10, sprite.health * 2.5, 7.5))
             elif sprite.name == 'boss':
-                if self.boss.x_distance >= 0:
-                    self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                      0), (sprite.x, sprite.y))
-                else:
-                    self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                      1), (sprite.x, sprite.y))
-                if sprite.animate >= sprite.img_x - 1:
-                    sprite.animate = 0
-                else:
-                    sprite.animate += 0.1
+                frame = 0 if self.boss.x_distance >= 0 else 1
+                self.window.blit(sprite.get_sheet(int(sprite.animate), frame), (sprite.x, sprite.y))
+                sprite.animate = (sprite.animate + 0.1) % sprite.img_x
             elif sprite.name == 'player':
-                sprite.x = self.player.x
-                sprite.y = self.player.y
+                sprite.x, sprite.y = self.player.x, self.player.y
                 if self.player.blink <= 0:
                     keys = pg.key.get_pressed()
                     mouse = pg.mouse.get_pressed()
                     if mouse[0]:
-                        if keys[pg.K_d]:
-                            self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                              4), (sprite.x, sprite.y))
-                        elif keys[pg.K_a]:
-                            self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                              3), (sprite.x, sprite.y))
-                        else:
-                            self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                              5), (sprite.x, sprite.y))
+                        frame = 4 if keys[pg.K_d] else 3 if keys[pg.K_a] else 5
                     else:
-                        if keys[pg.K_d]:
-                            self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                              1), (sprite.x, sprite.y))
-                        elif keys[pg.K_a]:
-                            self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                              0), (sprite.x, sprite.y))
-                        else:
-                            self.window.blit(sprite.get_sheet(int(sprite.animate),
-                                                              2), (sprite.x, sprite.y))
-                    if sprite.animate >= sprite.img_x - 1:
-                        sprite.animate = 0
-                    else:
-                        sprite.animate += 0.1
+                        frame = 1 if keys[pg.K_d] else 0 if keys[pg.K_a] else 2
+                    self.window.blit(sprite.get_sheet(int(sprite.animate), frame), (sprite.x, sprite.y))
+                    sprite.animate = (sprite.animate + 0.1) % sprite.img_x
                 else:
                     pg.draw.rect(self.window, (75, 75, 75),
                                  (self.player.x, self.player.y, self.player.size[0], self.player.size[1]))
@@ -149,6 +133,15 @@ class BossGame:
                     self.all_entity.remove(sprite)
                 elif not sprite.attack1():
                     self.all_entity.remove(sprite)
+                for sprite2 in self.all_entity:
+                    if pg.Rect(sprite.rect).colliderect(sprite2) and sprite2.name == "skeleton":
+                        if sprite2.health is not None:
+                            sprite2.health -= 2
+                        for i in range(4):
+                            self.all_entity.append(Sprites('particle', sprite.x,
+                                                           sprite.y, 8, 8, 'img/fireball.png', 10, 2))
+                        if sprite in self.all_entity:
+                            self.all_entity.remove(sprite)
             elif sprite.name == "particle" and not sprite.particle():
                 self.all_entity.remove(sprite)
             elif sprite.name == "skull" and not sprite.skull():
@@ -159,9 +152,9 @@ class BossGame:
             elif sprite.name == "skeleton":
                 if not sprite.skeleton():
                     self.all_entity.remove(sprite)
-                    for i in range(10):
+                    for i in range(15):
                         self.all_entity.append(Sprites('particle', sprite.x,
-                                                       sprite.y - 5, 8, 8, 'img/skulls.png', 16, 4))
+                                                       sprite.y - 5, 8, 8, 'img/skeleton.png', 16, 4))
                 elif sprite.x > self.player.x:
                     sprite.rand = 0
                 else:
@@ -180,7 +173,11 @@ class BossGame:
                 self.all_entity.append(Sprites('skull', random.randint(BORDER, WIN_WIDTH - BORDER), -32,
                                                32, 32, 'img/skulls.png', 1, 1, random.randint(0, 3)))
         elif self.boss.attack_id == 2 and self.boss.attack_faze == 30:
-            self.all_entity.append(Sprites('skeleton', WIN_WIDTH - BORDER - 64, WIN_HEIGHT - BORDER - 96,
+            self.all_entity.append(Sprites('skeleton', WIN_WIDTH - BORDER - 96, WIN_HEIGHT - BORDER - 96,
+                                           64, 96, 'img/skeleton.png', 28, 2, 0))
+            self.all_entity.append(Sprites('skeleton', BORDER + 32, WIN_HEIGHT - BORDER - 96,
+                                           64, 96, 'img/skeleton.png', 28, 2, 0))
+            self.all_entity.append(Sprites('skeleton', WIN_WIDTH // 2, WIN_HEIGHT - BORDER - 96,
                                            64, 96, 'img/skeleton.png', 28, 2, 0))
 
     def colision(self):
@@ -201,6 +198,14 @@ class BossGame:
                         for i in range(30):
                             self.all_entity.append(
                                 Sprites('particle', self.player.x, self.player.y + random.randint(-25, 25),
+                                        8, 8, 'img/gradient.png', 4, 4))
+                    if sprite.name == "skeleton":
+                        self.cooldown = 50
+                        self.player.health -= 1
+                        pg.mixer.Sound('sounds/metal_pipe.mp3').play()
+                        for i in range(30):
+                            self.all_entity.append(
+                                Sprites('particle', self.player.x, self.player.y + 20 + random.randint(-25, 25),
                                         8, 8, 'img/gradient.png', 4, 4))
 
         else:
@@ -300,7 +305,8 @@ class Player1:
     def attack(self):
         mouse = pg.mouse.get_pressed()
         if mouse[0] and self.cooldown == 0:
-            self.cooldown = 7
+            # pg.mixer.Sound('sounds/shot' + str(random.randint(1, 1)) + '.mp3').play()
+            self.cooldown = 6
             return True
 
     def resources(self):
@@ -391,18 +397,19 @@ class Sprites:
     def skeleton(self):
         if self.vel_x is None:
             self.vel_x = 0
-            self.health = 25
+            self.health = 30
         if self.health > 0:
+            self.rect = (self.x, self.y, self.size[0], self.size[1])
             if 7 > self.animate > 6 or 21 > self.animate >= 20:
                 if self.rand == 0:
-                    self.vel_x -= 0.4
+                    self.vel_x -= 0.45
                 else:
-                    self.vel_x += 0.4
+                    self.vel_x += 0.45
             elif 8 > self.animate > 7 or 22 > self.animate > 21:
                 if self.rand == 0:
-                    self.vel_x += 0.4
+                    self.vel_x += 0.45
                 else:
-                    self.vel_x -= 0.4
+                    self.vel_x -= 0.45
             elif self.animate > 22 or 20 > self.animate > 8 or 6 > self.animate:
                 self.vel_x = 0
             self.x += self.vel_x
