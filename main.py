@@ -414,7 +414,7 @@ class Game:
         pygame.time.wait(500)  # Oczekiwanie przez 0,5 sekundy
         self.playing = False
 
-        def intro_screen(self):
+    def intro_screen(self):
 
         self.dupa = 1
         SCREEN = pygame.display.set_mode((1540, 795))
