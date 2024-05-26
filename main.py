@@ -25,6 +25,7 @@ class Game:
         self.attack_spritesheet = Spritesheet('img/attack.png')
         self.text_spritesheet = Spritesheet('img/text.png')
         self.buttons_spritesheet = Spritesheet('img/buttons.png')
+        self.heads_spritesheet = Spritesheet('img/heads.png')
 
         self.camera_x = 0
         self.camera_y = 0
@@ -53,6 +54,9 @@ class Game:
         self.score = 0
         self.tokens = 0
 
+        self.player_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 0, 48, 48), (290, 290))
+        self.bar_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 48, 64, 64), (290, 290))
+
 
     def createTilemap(self):
         for i, row in enumerate(tilemap):
@@ -64,7 +68,7 @@ class Game:
                 if column == 'b':
                     Floor(self, j, i, column)
                 elif column == 'W':
-                    White(self, j, i)
+                    Ground(self, j, i)
                 elif column == "B":
                     Block(self, j, i)
                 elif column == "D":
@@ -209,11 +213,14 @@ class Game:
                     self.screen.blit(sprite.image, (sprite_on_screen_x, sprite_on_screen_y))
                 elif self.i != 0:
                     self.screen.blit(sprite.scaled_image, (sprite_on_screen_x, sprite_on_screen_y))
-        font = pygame.font.SysFont("Arial", 55)
-        score_text = font.render("Punkty: " + str(self.score), True, RED)
-        screen.blit(score_text, (1300, 10))
-        tokens = font.render("Tokeny: " + str(self.tokens), True, RED)
-        screen.blit(tokens, (0, 10))
+
+        font = pygame.font.SysFont("Arial", 65)
+        self.screen.blit(pygame.transform.scale(pygame.image.load('img/tokens.png'), (300, 100)), (0, 0))
+        self.screen.blit(pygame.transform.scale(pygame.image.load('img/tickets.png'), (300, 100)), (1235, 0))
+        score_text = font.render(str(self.score), True, WHITE)
+        screen.blit(score_text, (1335, 10))
+        tokens = font.render(str(self.tokens), True, WHITE)
+        screen.blit(tokens, (100, 10))
 
 
 
@@ -321,9 +328,10 @@ class Game:
         self.game_state = "main_game"
 
     def cup_game(self):
+
         self.dialouge = True
         """
-        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
+        self.bar_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
                                ,"To jest czwarta wiadomość"]
         """
         self.bar_messages = ["Zagrajmy"]
@@ -331,6 +339,7 @@ class Game:
 
         while self.dialouge:
             text.write()
+            self.screen.blit(self.player_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
         self.bar = CupGame(self)
         self.bar.run()

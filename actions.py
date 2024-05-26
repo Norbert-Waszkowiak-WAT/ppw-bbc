@@ -515,8 +515,8 @@ class Ground(pygame.sprite.Sprite):
         self.y = y * TILESIZE
         self.width = TILESIZE
         self.height = TILESIZE
-        self.i = random.randint(0, 2)
-        self.image = self.game.terrain_spritesheet.get_sprite(TILESIZE * self.i, 352, self.width, self.height)
+        self.i = random.randint(0, 5)
+        self.image = self.game.terrain_spritesheet.get_sprite(TILESIZE * self.i, 320, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
@@ -648,8 +648,6 @@ class Boss(pygame.sprite.Sprite):
         elif which_game == "cup_game":
             self.image = self.game.terrain_spritesheet.get_sprite(208, 864, 224, 144)
 
-
-
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
@@ -669,6 +667,7 @@ class Text:
         self.done = False
         self.active_message = 0
         self.message = text[self.active_message]
+
 
     def write(self):
 
@@ -690,7 +689,7 @@ class Text:
                     self.game.dialouge = False
         if not self.done:
             self.snip = self.font.render(self.message[0:self.counter // self.speed], True, 'white')
-        self.game.screen.blit(self.snip, (10, WIN_HEIGHT - TEXT_HEIGHT))
+        self.game.screen.blit(self.snip, (300, WIN_HEIGHT - 100))
 
 class Door(pygame.sprite.Sprite):
 
