@@ -171,9 +171,6 @@ class Game:
     def update(self):
         self.all_sprites.update()
 
-        self.new_game_button.kill()
-        self.exit_button.kill()
-        self.continue_button.kill()
 
         self.camera_x = self.player.rect.centerx - WIN_WIDTH // 2
         self.camera_y = self.player.rect.centery - WIN_HEIGHT // 2
@@ -312,17 +309,19 @@ class Game:
         self.shooter.run()
         self.game_state = "main_game"
     def jetpack_game(self):
+
         self.dialouge = True
-        """
-        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
-                               ,"To jest czwarta wiadomość"]
-        """
-        self.small_messages = ["Zagrajmy"]
-        text = Text(self, self.small_messages)
+        self.bar_messages = ["W tej grze musisz unikać rakiet i laserów. Celem jest osiągnięcie 8000 metrów.", "Wzlatujesz w góre za pomocą naciśnięcia spacji. Powodzenia!"]
+        text = Text(self, self.bar_messages)
 
         while self.dialouge:
             text.write()
+            self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
+        self.draw()
+
+
+        self.draw()
         self.jetpack = JetpackGame(self)
         self.jetpack.run()
         self.game_state = "main_game"
@@ -355,7 +354,7 @@ class Game:
             self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
         self.draw()
-        
+
         self.dialouge = True
         self.bar_messages = ["Zaczynajmy"]
         text = Text(self, self.bar_messages)
@@ -415,157 +414,7 @@ class Game:
         self.playing = False
 
     def intro_screen(self):
-
-        self.dupa = 1
-        SCREEN = pygame.display.set_mode((1540, 795))
-
-        BG = pygame.image.load('assets/tra.jpg')
-        BG = pygame.transform.scale(BG, (1540, 795))
-
-        def get_font(size):
-            return pygame.font.Font("assets/font.ttf", size)
-
-        class Button:
-            def __init__(self, image, pos, text_input, font, base_color, hovering_color):
-                self.image = image
-                self.x_pos = pos[0]
-                self.y_pos = pos[1]
-                self.font = font
-                self.base_color, self.hovering_color = base_color, hovering_color
-                self.text_input = text_input
-                self.text = self.font.render(self.text_input, True, self.base_color)
-                if self.image is None:
-                    self.image = self.text
-                self.rect = self.image.get_rect(center=(self.x_pos, self.y_pos))
-                self.text_rect = self.text.get_rect(center=(self.x_pos, self.y_pos))
-
-            def update(self, screen):
-                if self.image is not None:
-                    screen.blit(self.image, self.rect)
-                screen.blit(self.text, self.text_rect)
-
-            def check_for_input(self, position):
-                return self.rect.collidepoint(position)
-
-            def change_color(self, position):
-                if self.check_for_input(position):
-                    self.text = self.font.render(self.text_input, True, self.hovering_color)
-                else:
-                    self.text = self.font.render(self.text_input, True, self.base_color)
-
-        class Screen:
-            def __init__(self, game):
-                self.running = True
-                self.dupa = 1
-                self.game = game
-
-            def handle_events(self):
-                for event in pygame.event.get():
-                    if event.type == pygame.QUIT:
-                        pygame.quit()
-                        sys.exit()
-                    self.handle_event(event)
-
-            def run(self):
-                while self.running is True and self.dupa == 1:
-                    self.handle_events()
-                    self.update()
-                    self.draw()
-                    pygame.display.update()
-
-        class PlayScreen(Screen):
-            def __init__(self, game):
-                super().__init__(game)
-                self.back_button = Button(image=None, pos=(640, 460),
-                                          text_input="BACK", font=get_font(75), base_color="White",
-                                          hovering_color="Green")
-
-            def handle_event(self, event):
-                if event.type == pygame.MOUSEBUTTONDOWN and self.back_button.check_for_input(pygame.mouse.get_pos()):
-                    main_menu.run()
-
-            def update(self):
-                self.back_button.change_color(pygame.mouse.get_pos())
-
-            def draw(self):
-                SCREEN.fill("black")
-                play_text = get_font(45).render("This is the PLAY screen.", True, "White")
-                play_rect = play_text.get_rect(center=(640, 260))
-                SCREEN.blit(play_text, play_rect)
-                self.back_button.update(SCREEN)
-
-        class OptionsScreen(Screen):
-
-            def __init__(self, game):
-                super().__init__(game)
-                self.back_button = Button(image=None, pos=(640, 460),
-                                          text_input="BACK", font=get_font(75), base_color="Black",
-                                          hovering_color="Green")
-            def handle_event(self, event):
-                if event.type == pygame.MOUSEBUTTONDOWN and self.back_button.check_for_input(pygame.mouse.get_pos()):
-                    main_menu.run()
-
-            def update(self):
-                self.back_button.change_color(pygame.mouse.get_pos())
-
-            def draw(self):
-                SCREEN.fill("white")
-                options_text = get_font(45).render("This is the OPTIONS screen.", True, "Black")
-                options_rect = options_text.get_rect(center=(640, 260))
-                SCREEN.blit(options_text, options_rect)
-                self.back_button.update(SCREEN)
-
-
-
-        class MainMenuScreen(Screen):
-
-            def __init__(self, game):
-                super().__init__(game)
-                self.menu_text = get_font(100).render("MAIN MENU", True, "#b68f40")
-                self.menu_rect = self.menu_text.get_rect(center=(640, 125))
-                self.options_button = Button(image=pygame.image.load("assets/1.png"), pos=(640, 250),
-                                             text_input='CONTINUE', font=get_font(75), base_color="#d7fcd4",
-                                             hovering_color="White")
-                self.play_button = Button(image=pygame.image.load("assets/1.png"), pos=(640, 400),
-                                          text_input="NEW GAME", font=get_font(75), base_color="#d7fcd4",
-                                          hovering_color="White")
-                self.quit_button = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(640, 550),
-                                          text_input="QUIT", font=get_font(75), base_color="#d7fcd4",
-                                          hovering_color="White")
-            def handle_event(self, event):
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    mouse_pos = pygame.mouse.get_pos()
-                    if self.play_button.check_for_input(mouse_pos):
-                        #play_screen.run()
-                        self.dupa = 0
-                        self.game.game_state = "main_game"
-                    #elif self.options_button.check_for_input(mouse_pos):options_screen.run()
-                    elif self.quit_button.check_for_input(mouse_pos):
-                        pygame.quit()
-                        sys.exit()
-
-            def update(self):
-                mouse_pos = pygame.mouse.get_pos()
-                self.play_button.change_color(mouse_pos)
-                #self.options_button.change_color(mouse_pos)
-                self.quit_button.change_color(mouse_pos)
-
-            def draw(self):
-                SCREEN.blit(BG, (0, 0))
-                SCREEN.blit(self.menu_text, self.menu_rect)
-                self.play_button.update(SCREEN)
-                self.options_button.update(SCREEN)
-                self.quit_button.update(SCREEN)
-
-
-
-        play_screen = PlayScreen(self)
-        options_screen = OptionsScreen(self)
-        screen = Screen(self)
-        main_menu = MainMenuScreen(self)
-        main_menu.run()
-
-        """self.create_buttons()
+        self.create_buttons()
         for event in pygame.event.get():
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.button == 1:  # Lewy przycisk myszy
@@ -581,7 +430,7 @@ class Game:
 
         self.new_game_button.kill()
         self.exit_button.kill()
-        self.continue_button.kill()"""
+        self.continue_button.kill()
     def victory(self):
         game_over_font = pg.font.Font(None, 36)
         game_over_text = game_over_font.render("Przestań naciskać x", True, (0, 255, 0))
