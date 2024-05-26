@@ -663,7 +663,7 @@ class Text:
         self.font = pygame.font.Font('freesansbold.ttf', 24)
         self.snip = self.font.render('', True, 'white')
         self.counter = 0
-        self.speed = 50
+        self.speed = 25
         self.done = False
         self.active_message = 0
         self.message = text[self.active_message]
@@ -861,22 +861,6 @@ class Floor(pygame.sprite.Sprite):
         self.rect.x = self.x
         self.rect.y = self.y
 
-class White(pygame.sprite.Sprite):
-    def __init__(self, game, x, y):
-        self.game = game
-        self._layer = GROUND_LAYER
-        self.groups = self.game.all_sprites, self.game.grounds
-        pygame.sprite.Sprite.__init__(self, self.groups)
 
-        self.x = x * TILESIZE
-        self.y = y * TILESIZE
-        self.width = TILESIZE
-        self.height = TILESIZE
-
-        self.image = self.game.terrain_spritesheet.get_sprite(416, 800, self.width, self.height)
-
-        self.rect = self.image.get_rect()
-        self.rect.x = self.x
-        self.rect.y = self.y
 
 

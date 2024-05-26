@@ -330,17 +330,41 @@ class Game:
     def cup_game(self):
 
         self.dialouge = True
-        """
-        self.bar_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
-                               ,"To jest czwarta wiadomość"]
-        """
-        self.bar_messages = ["Zagrajmy"]
+        self.bar_messages = ["Witaj w naszym salonie gier!", "Dzięki tokenom możesz grać w różne gry i wygrywać tickety"]
         text = Text(self, self.bar_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
 
+        self.dialouge = True
+        self.bar_messages = ["Ale ja nie mam tokenów"]
+        text = Text(self, self.bar_messages)
         while self.dialouge:
             text.write()
             self.screen.blit(self.player_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
+        self.draw()
+
+        self.dialouge = True
+        self.bar_messages = ["Nic nie szkodzi", "Wystarczy, że wygrasz ze mną w kubki", "Zasady są proste: Wskaż kubek pod którym jest piłka",]
+        text = Text(self, self.bar_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+        
+        self.dialouge = True
+        self.bar_messages = ["Zaczynajmy"]
+        text = Text(self, self.bar_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.player_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
         self.bar = CupGame(self)
         self.bar.run()
         self.game_state = "main_game"
