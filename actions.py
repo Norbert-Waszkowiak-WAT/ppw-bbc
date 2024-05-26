@@ -199,41 +199,90 @@ class Player(pygame.sprite.Sprite):
 
         hits = pygame.sprite.spritecollide(self, self.game.bosses, False)
         for boss in hits:
+
             if direction == 'x':
+
                 if self.x_change > 0:
-                    if boss.which_game == "snake_game":
-                        self.game.game_state = "snake_game"
-                    elif boss.which_game == "small_game":
-                        self.game.game_state = "small_game"
-                    elif boss.which_game == "shooter_game":
-                        self.game.game_state = "shooter_game"
-                    elif boss.which_game == "jetpack_game":
-                        self.game.game_state = "jetpack_game"
+
+                    if boss.which_game == "cup_game":
+                        self.game.game_state = "cup_game"
+
+                    elif self.game.tokens == 0:
+                        self.game.no_tokens()
+
+                    else:
+                        self.game.tokens -= 1
+                        if boss.which_game == "snake_game":
+                            self.game.game_state = "snake_game"
+                        elif boss.which_game == "small_game":
+                            self.game.game_state = "small_game"
+                        elif boss.which_game == "shooter_game":
+                            self.game.game_state = "shooter_game"
+                        elif boss.which_game == "jetpack_game":
+                            self.game.game_state = "jetpack_game"
+
                     self.rect.right = boss.rect.left - TILESIZE
+
                 if self.x_change < 0:
-                    if boss.which_game == "snake_game":
-                        self.game.game_state = "snake_game"
-                    elif boss.which_game == "small_game":
-                        self.game.game_state = "small_game"
-                    elif boss.which_game == "shooter_game":
-                        self.game.game_state = "shooter_game"
+
+                    if boss.which_game == "cup_game":
+                        self.game.game_state = "cup_game"
+
+                    elif self.game.tokens == 0:
+                        self.game.no_tokens()
+
+                    else:
+                        self.game.tokens -= 1
+                        if boss.which_game == "snake_game":
+                            self.game.game_state = "snake_game"
+                        elif boss.which_game == "small_game":
+                            self.game.game_state = "small_game"
+                        elif boss.which_game == "shooter_game":
+                            self.game.game_state = "shooter_game"
+                        elif boss.which_game == "jetpack_game":
+                            self.game.game_state = "jetpack_game"
                     self.rect.left = boss.rect.right + TILESIZE
+
             if direction == 'y':
+
                 if self.y_change > 0:
-                    if boss.which_game == "snake_game":
-                        self.game.game_state = "snake_game"
-                    elif boss.which_game == "small_game":
-                        self.game.game_state = "small_game"
-                    elif boss.which_game == "shooter_game":
-                        self.game.game_state = "shooter_game"
+
+                    if boss.which_game == "cup_game":
+                        self.game.game_state = "cup_game"
+
+                    elif self.game.tokens == 0:
+                        self.game.no_tokens()
+
+                    else:
+                        self.game.tokens -= 1
+                        if boss.which_game == "snake_game":
+                            self.game.game_state = "snake_game"
+                        elif boss.which_game == "small_game":
+                            self.game.game_state = "small_game"
+                        elif boss.which_game == "shooter_game":
+                            self.game.game_state = "shooter_game"
+                        elif boss.which_game == "jetpack_game":
+                            self.game.game_state = "jetpack_game"
                     self.rect.bottom = boss.rect.top - TILESIZE
+
                 if self.y_change < 0:
-                    if boss.which_game == "snake_game":
-                        self.game.game_state = "snake_game"
-                    elif boss.which_game == "small_game":
-                        self.game.game_state = "small_game"
-                    elif boss.which_game == "shooter_game":
-                        self.game.game_state = "shooter_game"
+
+                    if boss.which_game == "cup_game":
+                        self.game.game_state = "cup_game"
+
+                    elif self.game.tokens == 0:
+                        self.game.no_tokens()
+
+                    else:
+                        self.game.tokens -= 1
+                        if boss.which_game == "snake_game":
+                            self.game.game_state = "snake_game"
+                        elif boss.which_game == "small_game":
+                            self.game.game_state = "small_game"
+                        elif boss.which_game == "shooter_game":
+                            self.game.game_state = "shooter_game"
+                        elif boss.which_game == "jetpack_game":
+                            self.game.game_state = "jetpack_game"
                     self.rect.top = boss.rect.bottom + TILESIZE
 
     def animate(self):
@@ -596,10 +645,15 @@ class Boss(pygame.sprite.Sprite):
             self.image = self.game.terrain_spritesheet.get_sprite(496, 704, self.width, self.height * 1.5)
         elif which_game == "jetpack_game":
             self.image = self.game.terrain_spritesheet.get_sprite(688, 704, self.width, self.height * 1.5)
-    
+        elif which_game == "cup_game":
+            self.image = self.game.terrain_spritesheet.get_sprite(208, 864, 224, 144)
+
+
+
         self.rect = self.image.get_rect()
         self.rect.x = self.x
         self.rect.y = self.y
+
 
 
 
@@ -642,7 +696,7 @@ class Door(pygame.sprite.Sprite):
 
     def __init__(self, game, x, y, health):
         self.game = game
-        self._layer = BLOCK_LAYER
+        self._layer = DOOR_LAYER
         self.groups = self.game.all_sprites, self.game.doors
         pygame.sprite.Sprite.__init__(self, self.groups)
 
@@ -793,8 +847,34 @@ class Floor(pygame.sprite.Sprite):
         self.y = y * TILESIZE
         self.width = TILESIZE
         self.height = TILESIZE
+        if type == 'w':
+            self.image = self.game.terrain_spritesheet.get_sprite(352, 672, self.width, self.height)
+        elif type == 'b' or type == 'P' or type == 'c':
+            self.image = self.game.terrain_spritesheet.get_sprite(416, 736, self.width, self.height)
+        elif type == 'z' or type == 'S' or type == 'd':
+            self.image = self.game.terrain_spritesheet.get_sprite(352, 736, self.width, self.height)
+        elif type == 'x' or type == 's':
+            self.image = self.game.terrain_spritesheet.get_sprite(352, 800, self.width, self.height)
+        else:
+            self.image = self.game.terrain_spritesheet.get_sprite(352, 672, self.width, self.height)
 
-        self.image = self.game.terrain_spritesheet.get_sprite(352, 672, self.width, self.height)
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+class White(pygame.sprite.Sprite):
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = GROUND_LAYER
+        self.groups = self.game.all_sprites, self.game.grounds
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.terrain_spritesheet.get_sprite(416, 800, self.width, self.height)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x

@@ -195,7 +195,7 @@ class JetpackGame:
             self.player_y += self.y_velocity
 
         if self.distance < 50000:
-            self.game_speed = 1 + (self.distance // 500) / 10
+            self.game_speed = 4 + (self.distance // 500) / 10
         else:
             self.game_speed = 11
 

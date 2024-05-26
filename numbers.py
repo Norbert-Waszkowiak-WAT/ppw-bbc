@@ -14,7 +14,7 @@ BOSS_LAYER = 5
 PLAYER_LAYER = 4
 ENEMY_LAYER = 3
 BLOCK_LAYER = 3
-RIVER_LAYER = 2
+DOOR_LAYER = 2
 GROUND_LAYER = 1
 
 RED = (255, 0, 0)
@@ -27,6 +27,11 @@ SNAKE_BORDER = 50
 
 """
 tilemap = [
+    print("dupa")
+            print(cup1.rect.x, cup1.rect.y, cup2.rect.x, cup2.rect.y)
+            print(cup1.start_x, cup1.start_y, cup2.start_x, cup2.start_y)
+            print(cup1.rect.x, cup1.rect.y, cup2.rect.x, cup2.rect.y)
+            print(cup1.start_x, cup1.start_y, cup2.start_x, cup2.start_y)
     'BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB',
     'B***********B*********c**************************B',
     'B************************************************B',
@@ -58,33 +63,30 @@ tilemap = [
 """
 tilemap = [
     'BBBBBBBBBBBBBBBBBBBBBBB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwBwwwswwwwBwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BBBBBBBBBBBdwBBBBBBBBBB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwBwwwSwwwwBwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
+    'BxxxxxxxxxxxxxxxxxxxxxB',
+    'BxxxxxxxBxxxsxxxxBxxxxB',
+    'BxxxxxxxxxxxxxxxxxxxxxB',
+    'BxxxxxxxxxxxxxxxxxxxxxB',
+    'BxxxxxxxxxxxxxxxxxxxxxB',
+    'BBBBBBBBBBBddBBBBBBBBBB',
+    'BzzzzzzzzzzzzzzzzzzzzzB',
+    'BzzzzzzzBzzzSzzzzBzzzzB',
+    'BzzzzzzzzzzzzzzzzzzzzzB',
+    'BzzzzzzzzzzzzzzzzzzzzzB',
+    'BzzzzzzzzzzzzzzzzzzzzzB',
     'BBBBBBBBBBBDwBBBBBBBBBB',
     'BwwwwwwwwwwwwwwwwwwwwwB',
+    'BwwwwwwwIwwwwwwwwJwwwwB',
     'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwIwwwwwwwwwwB',
     'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwBwwwPwwwwBwwwwB',
     'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BwwwwwwwwwwwwwwwJwwwwwB',
-    'BwwwwwwwwwwwwwwwwwwwwwB',
-    'BBBBBBBBBBBBBBBBBBBBBBB',
+    'BBBBBBBbcbbbbbBBBBBBBBB',
+    'WWWWWBBbbbbbbbBWWWWWWWW',
+    'WWWWWBBbbbbbbbBWWWWWWWW',
+    'WWWWWBBbbbbbbbBWWWWWWWW',
+    'WWWWWBBbbbbbbbBWWWWWWWW',
+    'WWWWWBBbbbPbbbBWWWWWWWW',
+    'WWWWWBBBBBBBBBBWWWWWWWW'
 ]
 
 #"""

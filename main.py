@@ -5,6 +5,7 @@ from Snake_1vs1 import *
 from Boss import *
 from shoter import *
 from jetpack import *
+from cup_game import *
 import sys
 import os
 
@@ -50,14 +51,20 @@ class Game:
         self.i = 0
         self.faded_sprites = []
         self.score = 0
+        self.tokens = 0
 
 
     def createTilemap(self):
         for i, row in enumerate(tilemap):
             for j, column in enumerate(row):
-                Floor(self, j, i, column)
+                if column != 'W':
+                    Floor(self, j, i, column)
                 if column == 'P':
                     Player(self, j, i)
+                if column == 'b':
+                    Floor(self, j, i, column)
+                elif column == 'W':
+                    White(self, j, i)
                 elif column == "B":
                     Block(self, j, i)
                 elif column == "D":
@@ -72,6 +79,8 @@ class Game:
                     Boss(self, j, i, "small_game", 0)
                 elif column == 'I':
                     Boss(self, j, i, "shooter_game", 100)
+                elif column == 'c':
+                    Boss(self, j, i, "cup_game", 0)
 
     def create_buttons(self):
         self.image = self.buttons_spritesheet.get_sprite(0, 64, 3 * TILESIZE, TILESIZE)
@@ -200,9 +209,11 @@ class Game:
                     self.screen.blit(sprite.image, (sprite_on_screen_x, sprite_on_screen_y))
                 elif self.i != 0:
                     self.screen.blit(sprite.scaled_image, (sprite_on_screen_x, sprite_on_screen_y))
-        font = pygame.font.SysFont(None, 55)
+        font = pygame.font.SysFont("Arial", 55)
         score_text = font.render("Punkty: " + str(self.score), True, RED)
         screen.blit(score_text, (1300, 10))
+        tokens = font.render("Tokeny: " + str(self.tokens), True, RED)
+        screen.blit(tokens, (0, 10))
 
 
 
@@ -244,12 +255,15 @@ class Game:
 
         self.game_state = "main_game"
 
+    def no_tokens(self):
+        pass
+
     def snake_game(self):
         self.dialouge = True
         """
         self.snake_messages = ["Hej głupi głupku!", "Musisz udowdnić że władasz lepiej swoim pythonem ode mnie", "Zagrajmy. Musisz 3 razy ogłuszyć karpia. Grałeś w slither.io? Coś w tym stylu. Obyś zdechł <3" ,"Jeśli jesteś słabiutki i nie jesteś w stanie pokonać hipermaszyny stworzonej przez największe mózgi tego świata. Naciśnij x"]
         """
-        self.snake_messages = ["kys"]
+        self.snake_messages = ["Zagrajmy"]
         text = Text(self, self.snake_messages)
 
         while self.dialouge:
@@ -266,7 +280,7 @@ class Game:
         self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
                                ,"To jest czwarta wiadomość"]
         """
-        self.small_messages = ["kys"]
+        self.small_messages = ["Zagrajmy"]
         text = Text(self, self.small_messages)
 
         while self.dialouge:
@@ -281,7 +295,7 @@ class Game:
         self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
                                ,"To jest czwarta wiadomość"]
         """
-        self.small_messages = ["kys"]
+        self.small_messages = ["Zagrajmy"]
         text = Text(self, self.small_messages)
 
         while self.dialouge:
@@ -296,7 +310,7 @@ class Game:
         self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
                                ,"To jest czwarta wiadomość"]
         """
-        self.small_messages = ["kys"]
+        self.small_messages = ["Zagrajmy"]
         text = Text(self, self.small_messages)
 
         while self.dialouge:
@@ -304,6 +318,22 @@ class Game:
             pygame.display.update()
         self.jetpack = JetpackGame(self)
         self.jetpack.run()
+        self.game_state = "main_game"
+
+    def cup_game(self):
+        self.dialouge = True
+        """
+        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
+                               ,"To jest czwarta wiadomość"]
+        """
+        self.bar_messages = ["Zagrajmy"]
+        text = Text(self, self.bar_messages)
+
+        while self.dialouge:
+            text.write()
+            pygame.display.update()
+        self.bar = CupGame(self)
+        self.bar.run()
         self.game_state = "main_game"
 
     def main(self):
@@ -325,6 +355,9 @@ class Game:
 
                 elif self.game_state == "jetpack_game":
                     self.jetpack_game()
+
+                elif self.game_state == "cup_game":
+                    self.cup_game()
 
                 elif self.game_state == "intro_game":
                     self.intro_screen()
