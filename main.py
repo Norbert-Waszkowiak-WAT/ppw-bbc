@@ -413,9 +413,8 @@ class Game:
         pygame.time.wait(500)  # Oczekiwanie przez 0,5 sekundy
         self.playing = False
 
-        def intro_screen(self):
+    def intro_screen(self):
 
-        self.dupa = 1
         SCREEN = pygame.display.set_mode((1540, 795))
 
         BG = pygame.image.load('assets/tra.jpg')
@@ -500,6 +499,7 @@ class Game:
                 self.back_button = Button(image=None, pos=(640, 460),
                                           text_input="BACK", font=get_font(75), base_color="Black",
                                           hovering_color="Green")
+
             def handle_event(self, event):
                 if event.type == pygame.MOUSEBUTTONDOWN and self.back_button.check_for_input(pygame.mouse.get_pos()):
                     main_menu.run()
@@ -513,8 +513,6 @@ class Game:
                 options_rect = options_text.get_rect(center=(640, 260))
                 SCREEN.blit(options_text, options_rect)
                 self.back_button.update(SCREEN)
-
-
 
         class MainMenuScreen(Screen):
 
@@ -531,14 +529,15 @@ class Game:
                 self.quit_button = Button(image=pygame.image.load("assets/Quit Rect.png"), pos=(750, 575),
                                           text_input="QUIT", font=get_font(75), base_color="#d7fcd4",
                                           hovering_color="White")
+
             def handle_event(self, event):
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     mouse_pos = pygame.mouse.get_pos()
                     if self.play_button.check_for_input(mouse_pos):
-                        #play_screen.run()
+                        # play_screen.run()
                         self.dupa = 0
                         self.game.game_state = "main_game"
-                    #elif self.options_button.check_for_input(mouse_pos):options_screen.run()
+                    # elif self.options_button.check_for_input(mouse_pos):options_screen.run()
                     elif self.quit_button.check_for_input(mouse_pos):
                         pygame.quit()
                         sys.exit()
@@ -546,7 +545,7 @@ class Game:
             def update(self):
                 mouse_pos = pygame.mouse.get_pos()
                 self.play_button.change_color(mouse_pos)
-                #self.options_button.change_color(mouse_pos)
+                # self.options_button.change_color(mouse_pos)
                 self.quit_button.change_color(mouse_pos)
 
             def draw(self):
@@ -555,8 +554,6 @@ class Game:
                 self.play_button.update(SCREEN)
                 self.options_button.update(SCREEN)
                 self.quit_button.update(SCREEN)
-
-
 
         play_screen = PlayScreen(self)
         options_screen = OptionsScreen(self)

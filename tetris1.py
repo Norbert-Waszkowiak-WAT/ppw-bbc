@@ -181,7 +181,7 @@ class TetrisGame:
                     self.clock.tick(200)
 
     def run(self):
-        while True:
+        while True and self.score < 500:
             record = self.get_record()
             dx, rotate = self.handle_events()
             self.move_figure(dx, rotate)
