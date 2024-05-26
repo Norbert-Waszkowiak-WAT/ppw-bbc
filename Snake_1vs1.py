@@ -9,7 +9,7 @@ class SnakeGame:
         self.main = main
         self.game_state = "snake_game"
         pg.init()
-        self.screen = pg.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+        self.screen = pg.display.set_mode((1536, 780))
         self.fps = pg.time.Clock()
         self.crash = None
 
@@ -22,16 +22,16 @@ class SnakeGame:
         self.printer = Printer(self)
 
         self.fruit_position = [
-            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_WIDTH - SNAKE_BORDER) // self.pixel)) * self.pixel,
-            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_HEIGHT - SNAKE_BORDER) // self.pixel)) * self.pixel]
+            random.randrange(SNAKE_BORDER / self.pixel, ((1536 - SNAKE_BORDER) // self.pixel)) * self.pixel,
+            random.randrange(SNAKE_BORDER / self.pixel, ((780 - SNAKE_BORDER) // self.pixel)) * self.pixel]
         self.fruit_on_map = True
 
-        self.all_entity = [Sprites(0, 0, WIN_WIDTH, WIN_HEIGHT, 'img/snake_background.png')]
+        self.all_entity = [Sprites(0, 0, 1536, 780, 'img/snake_background.png')]
 
     def fruit(self):
         self.fruit_position = [
-            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_WIDTH - SNAKE_BORDER) // self.pixel)) * self.pixel,
-            random.randrange(SNAKE_BORDER / self.pixel, ((WIN_HEIGHT - SNAKE_BORDER) // self.pixel)) * self.pixel]
+            random.randrange(SNAKE_BORDER / self.pixel, ((1536 - SNAKE_BORDER) // self.pixel)) * self.pixel,
+            random.randrange(SNAKE_BORDER / self.pixel, ((780 - SNAKE_BORDER) // self.pixel)) * self.pixel]
         self.fruit_on_map = True
 
     def handle_events(self):
@@ -55,7 +55,7 @@ class SnakeGame:
         my_font = pg.font.SysFont('times new roman', 50)
         game_over_surface = my_font.render('Game over', True, (255, 0, 0))
         game_over_rect = game_over_surface.get_rect()
-        game_over_rect.midtop = (WIN_WIDTH / 2, WIN_HEIGHT / 4)
+        game_over_rect.midtop = (1536 / 2, 780 / 4)
 
         self.screen.blit(game_over_surface, game_over_rect)
         pg.display.flip()
@@ -68,7 +68,7 @@ class SnakeGame:
         my_font = pg.font.SysFont('times new roman', 50)
         game_over_surface = my_font.render('Wygrałeś!!!', True, (255, 255, 0))
         game_over_rect = game_over_surface.get_rect()
-        game_over_rect.midtop = (WIN_WIDTH / 2, WIN_HEIGHT / 4)
+        game_over_rect.midtop = (1536 / 2, 780 / 4)
 
         self.screen.blit(game_over_surface, game_over_rect)
         pg.display.flip()
@@ -135,11 +135,11 @@ class Snake:
         else:
             self.snake_body.pop()
 
-        if self.snake_position[0] < SNAKE_BORDER or self.snake_position[0] > WIN_WIDTH - self.game.pixel - SNAKE_BORDER:
+        if self.snake_position[0] < SNAKE_BORDER or self.snake_position[0] > 1536 - self.game.pixel - SNAKE_BORDER:
             self.game.game_over()
 
         if self.snake_position[1] < SNAKE_BORDER or self.snake_position[
-            1] > WIN_HEIGHT - self.game.pixel - SNAKE_BORDER:
+            1] > 780 - self.game.pixel - SNAKE_BORDER:
             self.game.game_over()
 
         for block in self.snake_body[1:]:
@@ -167,13 +167,13 @@ class Bot:
                 [x, y - self.game.pixel]) == 1 or y - self.game.pixel < SNAKE_BORDER) and d != 'D':
             wall += 'U'
         if (self.game.snake.snake_body.count([x, y + self.game.pixel]) == 1 or self.bot_body.count(
-                [x, y + self.game.pixel]) == 1 or y + self.game.pixel == WIN_HEIGHT - SNAKE_BORDER - 5) and d != 'U':
+                [x, y + self.game.pixel]) == 1 or y + self.game.pixel == 780 - SNAKE_BORDER - 5) and d != 'U':
             wall += 'D'
         if (self.game.snake.snake_body.count([x - self.game.pixel, y]) == 1 or self.bot_body.count(
                 [x - self.game.pixel, y]) == 1 or x - self.game.pixel < SNAKE_BORDER) and d != 'R':
             wall += 'L'
         if (self.game.snake.snake_body.count([x + self.game.pixel, y]) == 1 or self.bot_body.count(
-                [x + self.game.pixel, y]) == 1 or x + self.game.pixel == WIN_WIDTH - SNAKE_BORDER - 11) and d != 'L':
+                [x + self.game.pixel, y]) == 1 or x + self.game.pixel == 1536 - SNAKE_BORDER - 11) and d != 'L':
             wall += 'R'
         return wall
 
@@ -291,8 +291,8 @@ class Printer:
         for sprite in self.game.all_entity:
             self.game.screen.blit(sprite.get_sheet(0, 0), (sprite.x, sprite.y))
 
-        for x in range(0, (WIN_WIDTH - 2 * SNAKE_BORDER - 11) // self.game.pixel):
-            for y in range(0, (WIN_HEIGHT - 2 * SNAKE_BORDER - 5) // self.game.pixel):
+        for x in range(0, (1536 - 2 * SNAKE_BORDER - 11) // self.game.pixel):
+            for y in range(0, (780 - 2 * SNAKE_BORDER - 5) // self.game.pixel):
                 pg.draw.rect(self.game.screen, (60, 60, 60),
                              pg.Rect(SNAKE_BORDER + x * self.game.pixel, SNAKE_BORDER + y * self.game.pixel,
                                      self.game.pixel, self.game.pixel))
