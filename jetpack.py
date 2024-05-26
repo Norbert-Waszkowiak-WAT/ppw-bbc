@@ -71,7 +71,7 @@ class JetpackGame:
         lase_line = pygame.draw.line(self.screen, 'yellow', (self.laser[0][0], self.laser[0][1]), (self.laser[1][0], self.laser[1][1]), 10)
         pygame.draw.circle(self.screen, 'yellow', (self.laser[0][0], self.laser[0][1]), 12)
         pygame.draw.circle(self.screen, 'yellow', (self.laser[1][0], self.laser[1][1]), 12)
-        self.screen.blit(self.font.render(f'Distance: {int(self.distance)} m', True, 'white'), (10, 10))
+        self.screen.blit(self.font.render(f'Distance: {int(self.distance) + 3} m', True, 'white'), (10, 10))
         self.screen.blit(self.font.render(f'High Score: {int(self.high_score)} m', True, 'white'), (10, 70))
         return top, bot, lase_line
 
@@ -126,7 +126,7 @@ class JetpackGame:
         return new_lase
 
     def update(self):
-        if self.distance > 5000:
+        if self.distance > 8000:
             self.victory()
         self.timer.tick(self.fps)
         if self.counter < 40:
