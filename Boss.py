@@ -12,7 +12,7 @@ class BossGame:
         self.time = 0
         self.window_width = WIN_WIDTH
         self.window_height = WIN_HEIGHT
-        self.player = Player1((WIN_WIDTH - 16) / 2, 300, 32, 64)
+        self.player = Player1((WIN_WIDTH - 16) / 2, 350, 32, 64)
         self.boss = Boss1(128, 128, self.player)
         self.game_state = "small_game"
         pg.init()
@@ -24,7 +24,7 @@ class BossGame:
         self.dead = 0
         self.all_entity = [Sprites('boss', self.boss.x, self.boss.y, 128, 128, 'img/boss_game/Boss.png', 2, 4),
                            Sprites('player', 725, 300, 40, 80, 'img/boss_game/Boss_character.png', 4, 12),
-                           Sprites('background', 0, 0, 1536, 780, 'img/boss_game/Boss_Background.png')]
+                           Sprites('background', 0, 0, 1540, 795, 'img/boss_game/Boss_Background.png', 2, 2)]
         for i in range(self.player.health):
             self.all_entity.append(Sprites('heart', BORDER + 4 + i * 35, 5, 45, 45, 'img/boss_game/heart.png'))
         self.all_entity.append(Sprites('bar', WIN_WIDTH / 2 - 275, 0, 550, 45, 'img/boss_game/bossbar1.png'))
