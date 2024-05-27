@@ -10,12 +10,13 @@ FPS = 60
 
 
 class TetrisGame:
-    def __init__(self):
+    def __init__(self, main):
         pygame.init()
+        self.game = main
         self.sc = pygame.display.set_mode(RES)
         self.game_sc = pygame.Surface(GAME_RES)
         self.clock = pygame.time.Clock()
-
+        self.game_state = "easter_egg"
         self.grid = [pygame.Rect(x * TILE, y * TILE, TILE, TILE) for x in range(W) for y in range(H)]
 
         self.figures_pos = [[(-1, 0), (-2, 0), (0, 0), (1, 0)],
@@ -79,6 +80,8 @@ class TetrisGame:
             if event.type == pygame.QUIT:
                 exit()
             if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_x:
+                    self.game_state = "main_game"
                 if event.key == pygame.K_LEFT:
                     dx = -1
                 elif event.key == pygame.K_RIGHT:
@@ -87,6 +90,7 @@ class TetrisGame:
                     self.anim_limit = 100
                 elif event.key == pygame.K_UP:
                     rotate = True
+
         return dx, rotate
 
     def move_figure(self, dx, rotate):
@@ -181,7 +185,7 @@ class TetrisGame:
                     self.clock.tick(200)
 
     def run(self):
-        while True and self.score < 500:
+        while True and self.score < 500 and self.game_state == "easter_egg":
             record = self.get_record()
             dx, rotate = self.handle_events()
             self.move_figure(dx, rotate)
@@ -190,7 +194,9 @@ class TetrisGame:
             self.game_over(record)
             pygame.display.flip()
             self.clock.tick(FPS)
+        quit()
 
 
 
-TetrisGame().run()
+
+

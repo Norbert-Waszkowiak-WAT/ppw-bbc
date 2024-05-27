@@ -6,6 +6,7 @@ from Boss import *
 from shoter import *
 from jetpack import *
 from cup_game import *
+from tetris1 import *
 import sys
 import os
 
@@ -56,6 +57,10 @@ class Game:
 
         self.player_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 0, 48, 48), (290, 290))
         self.bar_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 48, 64, 64), (290, 290))
+        self.jetpack_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 240, 64, 64), (290, 290))
+        self.shooter_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 112, 64, 64), (290, 290))
+        self.small_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(0, 176, 64, 64), (290, 290))
+        self.snake_head = pygame.transform.scale(self.heads_spritesheet.get_sprite(80, 48, 64, 64), (290, 290))
 
 
     def createTilemap(self):
@@ -71,6 +76,10 @@ class Game:
                     Ground(self, j, i)
                 elif column == "B":
                     Block(self, j, i)
+                elif column == "e":
+                    Boss(self, j, i, "easter_egg", 100000)
+                elif column == "q":
+                    EasterEgg(self, j, i)
                 elif column == "D":
                     Door(self, j, i, 200)
                 elif column == "d":
@@ -260,53 +269,116 @@ class Game:
         self.game_state = "main_game"
 
     def no_tokens(self):
-        pass
+        self.dialouge = True
+        self.bar_messages = ["Potrzebujesz tokenów żeby grac na automatach"]
+        text = Text(self, self.bar_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
 
     def snake_game(self):
         self.dialouge = True
-        """
-        self.snake_messages = ["Hej głupi głupku!", "Musisz udowdnić że władasz lepiej swoim pythonem ode mnie", "Zagrajmy. Musisz 3 razy ogłuszyć karpia. Grałeś w slither.io? Coś w tym stylu. Obyś zdechł <3" ,"Jeśli jesteś słabiutki i nie jesteś w stanie pokonać hipermaszyny stworzonej przez największe mózgi tego świata. Naciśnij x"]
-        """
-        self.snake_messages = ["Zagrajmy"]
+        self.snake_messages = ["Gra jest połączeniem gry snake, oraz popualrnego slither.io", "Wygrasz gdy ogłuszysz karpia 3 razy",
+                                "Czyli musisz sprawić żeby przeciwnik zderzył się ze sobą", "Poruszasz się WSAD", "Powodzenia!"]
         text = Text(self, self.snake_messages)
 
         while self.dialouge:
             text.write()
+            self.screen.blit(self.snake_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
+        self.draw()
+
+        self.dialouge = True
+        self.snake_messages = ["Zaczynajmy"]
+        text = Text(self, self.snake_messages)
+
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.player_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
         self.snake = SnakeGame(self)
         self.snake.run()
+
+        self.dialouge = True
+        self.small_messages = ["Gratulacje, Wygrałeś!", "Zdobywasz 300 ticketów"]
+        text = Text(self, self.small_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.snake_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
+        self.game_state = "main_game"
+
+    def easter_egg(self):
+        self.dialouge = True
+        self.snake_messages = ["Co to?"]
+        text = Text(self, self.snake_messages)
+
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.player_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
+        self.tetris = TetrisGame(self)
+        self.tetris.run()
+
         self.game_state = "main_game"
 
     def small_game(self):
 
         self.dialouge = True
-        """
-        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
-                               ,"To jest czwarta wiadomość"]
-        """
-        self.small_messages = ["Zagrajmy"]
+        self.small_messages = ["Pora zawalczyć ze bosem", "To znaczy, przegrać"]
         text = Text(self, self.small_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.small_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
+        self.dialouge = True
+        self.snake_messages = ["Zaczynajmy"]
+        text = Text(self, self.snake_messages)
 
         while self.dialouge:
             text.write()
+            self.screen.blit(self.player_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
+        self.draw()
+
         self.small = BossGame(self)
         self.small.run()
+
+
+
         self.game_state = "main_game"
     def shooter_game(self):
         self.dialouge = True
-        """
-        self.small_messages = ["To jest pierwsza wiadomość", "To jest druga wiadomość", "To jest trzecia wiadomość"
-                               ,"To jest czwarta wiadomość"]
-        """
-        self.small_messages = ["Zagrajmy"]
+        self.small_messages = ["Zasady jak w space invaders!", "Jeśli ich nie znasz to możesz wyjść z salonu", "Powodzenia!"]
         text = Text(self, self.small_messages)
-
         while self.dialouge:
             text.write()
+            self.screen.blit(self.shooter_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
+        self.draw()
+
         self.shooter = ShooterGame(self)
         self.shooter.run()
+
+        self.dialouge = True
+        self.small_messages = ["Gratulacje, Wygrałeś!", "Zdobywasz 100 ticketów"]
+        text = Text(self, self.small_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.shooter_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
         self.game_state = "main_game"
     def jetpack_game(self):
 
@@ -316,7 +388,7 @@ class Game:
 
         while self.dialouge:
             text.write()
-            self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
+            self.screen.blit(self.jetpack_head, (0, WIN_HEIGHT - 300))
             pygame.display.update()
         self.draw()
 
@@ -324,6 +396,16 @@ class Game:
         self.draw()
         self.jetpack = JetpackGame(self)
         self.jetpack.run()
+
+        self.dialouge = True
+        self.bar_messages = ["Gratulacje, Wygrałeś!", "Zdobywasz 100 ticketów"]
+        text = Text(self, self.bar_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.jetpack_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
         self.game_state = "main_game"
 
     def cup_game(self):
@@ -366,6 +448,16 @@ class Game:
 
         self.bar = CupGame(self)
         self.bar.run()
+
+        self.dialouge = True
+        self.bar_messages = ["Gratulacje, Wygrałeś, !", "Zdobywasz 1000 tokenów. 1 token to jedna szansa gry", "Miłej gry na automatach!"]
+        text = Text(self, self.bar_messages)
+        while self.dialouge:
+            text.write()
+            self.screen.blit(self.bar_head, (0, WIN_HEIGHT - 300))
+            pygame.display.update()
+        self.draw()
+
         self.game_state = "main_game"
 
     def main(self):
@@ -390,6 +482,9 @@ class Game:
 
                 elif self.game_state == "cup_game":
                     self.cup_game()
+
+                elif self.game_state == "easter_egg":
+                    self.easter_egg()
 
                 elif self.game_state == "intro_game":
                     self.intro_screen()

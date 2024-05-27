@@ -99,12 +99,6 @@ class CupGame:
     def victory(self):
         self.main.tokens = 1000
         pygame.mixer.stop()
-        my_font = pygame.font.SysFont('times new roman', 50)
-        game_over_surface = my_font.render('Wygrałeś!!!', True, (255, 255, 0))
-        game_over_rect = game_over_surface.get_rect()
-        game_over_rect.midtop = (WIN_WIDTH / 2, WIN_HEIGHT / 4)
-
-        self.screen.blit(game_over_surface, game_over_rect)
         pygame.display.flip()
 
         time.sleep(3)

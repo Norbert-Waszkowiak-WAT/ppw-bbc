@@ -80,12 +80,6 @@ class ShooterGame:
 
     def victory(self):
         pygame.mixer.stop()
-        game_over_font = pygame.font.Font(None, 36)
-        game_over_text = game_over_font.render("Victory", True, (0, 255, 0))
-        game_over_rect = game_over_text.get_rect()
-        game_over_rect.center = (self.window_width // 2, self.window_height // 2)
-        self.window.fill((0, 0, 0))
-        self.window.blit(game_over_text, game_over_rect)
         pygame.display.flip()
         pygame.time.wait(1000)
         self.game_state = "main_game"

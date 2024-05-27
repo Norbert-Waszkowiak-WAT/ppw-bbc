@@ -2,6 +2,7 @@ import random
 import pygame
 from numbers import *
 import time
+from actions import *
 class JetpackGame:
     def __init__(self, main):
         self.main = main
@@ -224,12 +225,6 @@ class JetpackGame:
 
     def victory(self):
         pygame.mixer.stop()
-        my_font = pygame.font.SysFont('times new roman', 50)
-        game_over_surface = my_font.render('Wygrałeś!!!', True, (255, 255, 0))
-        game_over_rect = game_over_surface.get_rect()
-        game_over_rect.midtop = (WIN_WIDTH / 2, WIN_HEIGHT / 4)
-
-        self.screen.blit(game_over_surface, game_over_rect)
         pygame.display.flip()
 
         time.sleep(3)
@@ -281,5 +276,72 @@ class JetpackGame:
                 coords[0] -= 10 + self.game_speed
 
         return coords, rock
+
+"""class Player(pygame.sprite.Sprite):
+
+    def __init__(self, game, x, y):
+
+        self.game = game
+        self._layer = PLAYER_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = 64
+        self.height = 64
+
+        self.x_change = 0
+        self.y_change = 0
+
+
+        self.animation_loop = 1
+
+        self.image = self.game.character_spritesheet.get_sprite(0, 0, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+        self.down_animations = [self.game.character_spritesheet.get_sprite(0, 0, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(64, 0, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(128, 0, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(192, 0, self.width, self.height)]
+
+        self.up_animations = [self.game.character_spritesheet.get_sprite(0, 192, self.width, self.height),
+                              self.game.character_spritesheet.get_sprite(64, 192, self.width, self.height),
+                              self.game.character_spritesheet.get_sprite(128, 192, self.width, self.height),
+                              self.game.character_spritesheet.get_sprite(192, 192, self.width, self.height)]
+
+        self.left_animations = [self.game.character_spritesheet.get_sprite(0, 64, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(64, 64, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(128, 64, self.width, self.height),
+                                self.game.character_spritesheet.get_sprite(192, 64, self.width, self.height)]
+
+        self.right_animations = [self.game.character_spritesheet.get_sprite(0, 128, self.width, self.height),
+                                 self.game.character_spritesheet.get_sprite(64, 128, self.width, self.height),
+                                 self.game.character_spritesheet.get_sprite(128, 128, self.width, self.height),
+                                 self.game.character_spritesheet.get_sprite(192, 128, self.width, self.height)]
+
+    def update(self):
+
+        self.movement()
+
+        self.rect.x += self.x_change
+        self.collide_obstacles('x')
+        self.rect.y += self.y_change
+        self.collide_obstacles('y')
+
+        #self.rect.center = self.hitbox.center
+
+
+        self.animate()
+
+        self.collide_boss_area('x')
+        self.collide_boss_area('y')
+        self.collide_enemy()
+
+        self.x_change = 0
+        self.y_change = 0"""
 
 

@@ -205,6 +205,8 @@ class Player(pygame.sprite.Sprite):
 
                 if self.x_change > 0:
 
+                    if boss.which_game == "easter_egg":
+                        self.game.game_state = "easter_egg"
                     if boss.which_game == "cup_game":
                         self.game.game_state = "cup_game"
 
@@ -221,10 +223,15 @@ class Player(pygame.sprite.Sprite):
                             self.game.game_state = "shooter_game"
                         elif boss.which_game == "jetpack_game":
                             self.game.game_state = "jetpack_game"
+                        elif boss.which_game == "jetpack_game":
+                            self.game.game_state = "jetpack_game"
 
                     self.rect.right = boss.rect.left - TILESIZE
 
                 if self.x_change < 0:
+
+                    if boss.which_game == "easter_egg":
+                        self.game.game_state = "easter_egg"
 
                     if boss.which_game == "cup_game":
                         self.game.game_state = "cup_game"
@@ -248,6 +255,9 @@ class Player(pygame.sprite.Sprite):
 
                 if self.y_change > 0:
 
+                    if boss.which_game == "easter_egg":
+                        self.game.game_state = "easter_egg"
+
                     if boss.which_game == "cup_game":
                         self.game.game_state = "cup_game"
 
@@ -267,6 +277,9 @@ class Player(pygame.sprite.Sprite):
                     self.rect.bottom = boss.rect.top - TILESIZE
 
                 if self.y_change < 0:
+
+                    if boss.which_game == "easter_egg":
+                        self.game.game_state = "easter_egg"
 
                     if boss.which_game == "cup_game":
                         self.game.game_state = "cup_game"
@@ -465,6 +478,26 @@ class Block(pygame.sprite.Sprite):
 
         self.hitbox = self.rect.inflate(0, -45)
 
+class EasterEgg(pygame.sprite.Sprite):
+
+    def __init__(self, game, x, y):
+        self.game = game
+        self._layer = BLOCK_LAYER
+        self.groups = self.game.all_sprites
+        pygame.sprite.Sprite.__init__(self, self.groups)
+
+        self.x = x * TILESIZE
+        self.y = y * TILESIZE
+        self.width = TILESIZE
+        self.height = TILESIZE
+
+        self.image = self.game.terrain_spritesheet.get_sprite(416, 672, self.width, self.height)
+
+        self.rect = self.image.get_rect()
+        self.rect.x = self.x
+        self.rect.y = self.y
+
+
 
 class River(pygame.sprite.Sprite):
     def __init__(self, game, x, y, initial_frame):
@@ -648,6 +681,8 @@ class Boss(pygame.sprite.Sprite):
             self.image = self.game.terrain_spritesheet.get_sprite(688, 704, self.width, self.height * 1.5)
         elif which_game == "cup_game":
             self.image = self.game.terrain_spritesheet.get_sprite(208, 864, 224, 144)
+        elif which_game == "easter_egg":
+            self.image = self.game.terrain_spritesheet.get_sprite(0, 320, TILESIZE, TILESIZE)
 
         self.rect = self.image.get_rect()
         self.rect.x = self.x
