@@ -279,6 +279,7 @@ class Game:
         self.draw()
 
     def snake_game(self):
+        score = self.score 
         self.dialouge = True
         self.snake_messages = ["Gra jest połączeniem gry snake, oraz popualrnego slither.io", "Wygrasz gdy ogłuszysz karpia 3 razy",
                                 "Czyli musisz sprawić żeby przeciwnik zderzył się ze sobą", "Poruszasz się WSAD", "Powodzenia!"]
@@ -302,14 +303,15 @@ class Game:
 
         self.snake = SnakeGame(self)
         self.snake.run()
+        if self.score != score: 
 
-        self.dialouge = True
-        self.small_messages = ["Gratulacje, Wygrałeś!", "Zdobywasz 300 ticketów"]
-        text = Text(self, self.small_messages)
-        while self.dialouge:
-            text.write()
-            self.screen.blit(self.snake_head, (0, WIN_HEIGHT - 300))
-            pygame.display.update()
+            self.dialouge = True
+            self.small_messages = ["Gratulacje, Wygrałeś!", "Zdobywasz 300 ticketów"]
+            text = Text(self, self.small_messages)
+            while self.dialouge:
+                text.write()
+                self.screen.blit(self.snake_head, (0, WIN_HEIGHT - 300))
+                pygame.display.update()
         self.draw()
 
         self.game_state = "main_game"
